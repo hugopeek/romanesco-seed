@@ -1,0 +1,295 @@
+#!/bin/bash
+
+# Romanesco Seed
+# ==============================================================================
+#
+# A collection of commands for installing a Romanesco project.
+
+
+# Functions
+# ==============================================================================
+
+# generate random password
+function genpasswd() {
+  local l=$1
+  [ "$l" == "" ] && l=16
+  tr -dc A-Za-z0-9_ </dev/urandom | head -c ${l} | xargs
+}
+
+# return useful error on failure
+function clarify() {
+  exitCode="$?"
+  # ignore exit code 0
+  if [[ $exitCode -gt 0 ]] ; then
+    echo "\"${last_command}\" command failed with exit code $exitCode."
+  fi
+}
+
+
+# Config
+# ==============================================================================
+
+# determine absolute path of this file and chdir to it
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # loop until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  # if $SOURCE was a relative symlink, we need to resolve it relative to the
+  # path where the symlink file was located
+  [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+cd "$DIR"
+
+# exit on any type of error
+set -e
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+
+# clarify errors on exit
+trap clarify EXIT
+
+
+# Variables
+# ==============================================================================
+
+version="1.0"
+seedPath="$DIR"
+
+# styling
+RED="\033[0;31m"
+GREEN="\033[1;32m"
+YELLOW="\033[0;33m"
+NC='\033[0m' #no color
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+
+# defaults
+romanescoInstaller="$seedPath"
+romanescoDefaults=
+modxVersion=
+gpmPath=
+packagesPath=
+themeColorPrimary=
+themeColorPrimaryLight=
+welcomePage=
+localUser=
+homeFolder=
+
+# load local variables from file
+source "${seedPath%/}"/config.sh
+
+# Options
+# ==============================================================================
+
+while [[ "$1" ]]; do
+  case $1 in
+  -v | --version)
+    echo "$version"
+    exit
+    ;;
+  -h | --help)
+    echo "Usage: [TASK] [SUBJECT] [--OPTION] for project [PROJECT_NAME]"
+    echo "Example: plant seed for project 'Romanesco' -d romanesco.info"
+    echo "You can chain tasks together with 'and'."
+    echo "Example: prepare everything and plant seed for project Romanesco"
+    echo ""
+    echo "Available tasks, subjects and options:"
+    echo "    prepare"
+    echo "      user*             create local Linux user + home folder"
+    echo "      nginx*            add server config to sites-available"
+    echo "      php-fpm*          add separate php-fpm pool for local user"
+    echo "      mysql             create database and db user"
+    echo "      ssl               generate SSL certificate with Let's Encrypt"
+    echo "      everything        perform all of the above"
+    echo "      -f|--force        remove existing data first"
+    echo "    plant"
+    echo "      seed              create a new Romanesco project"
+    echo "      gitify            install a customized fork of Gitify"
+    echo "      node              install NodeJS + npm locally with NVM"
+    echo "      -f|--force        remove existing data first"
+    echo "    purge"
+    echo "      everything        remove folder, database and Nginx config"
+    echo "    for project"
+    echo "      [PROJECT_NAME]    wrap in '' if name consists of multiple words"
+    echo "      -p|--path PATH              default: ${wwwPath}/project-name"
+    echo "      -d|--domain DOMAIN          default: project-name.${domainExt}"
+    echo "      -u|--username USERNAME      default: ${defaultUser}"
+    echo "      -s|--password PASSWORD      default: {generated}"
+    echo "      -e|--email EMAIL            default: ${defaultEmail}"
+    echo "      -l|--language EN            default: ${defaultLanguage:-EN}"
+    echo ""
+    echo "*requires sudo privileges"
+    exit
+    ;;
+  prepare)
+    prepareFlag=1
+    prepareNginx=
+    preparePHP=
+    prepareMySQL=
+    prepareSSL=
+    prepareAll=
+    forcePrepare=
+    while [[ "$2" ]]; do
+      # move to next task
+      if [[ "$2" == "and" ]]; then break; fi
+      if [[ "$2" == "for" ]]; then break; fi
+      case $2 in
+      nginx)
+        prepareNginx=1
+        ;;
+      php-fpm)
+        preparePHP=1
+        ;;
+      mysql)
+        prepareMySQL=1
+        ;;
+      ssl)
+        prepareSSL=1
+        ;;
+      everything)
+        prepareAll=1
+        ;;
+      -f | --force)
+        forcePrepare=1
+        ;;
+      esac
+      shift
+    done
+    ;;
+  plant)
+    plantFlag=1
+    plantSeed=
+    plantGitify=
+    plantNode=
+    forcePlant=
+    while [[ "$2" ]]; do
+      # move to next task
+      if [[ "$2" == "and" ]]; then break; fi
+      if [[ "$2" == "for" ]]; then break; fi
+      case $2 in
+      seed)
+        plantSeed=1
+        ;;
+      gitify)
+        plantGitify=1
+        ;;
+      node)
+        plantNode=1
+        ;;
+      -f | --force)
+        forcePlant=1
+        ;;
+      esac
+      shift
+    done
+    ;;
+  purge)
+    purgeFlag=1
+    purgeAll=
+    while [[ "$2" ]]; do
+      # move to next task
+      if [[ "$2" == "and" ]]; then break; fi
+      if [[ "$2" == "for" ]]; then break; fi
+      case $2 in
+      everything)
+        purgeAll=1
+        ;;
+      esac
+      shift
+    done
+    ;;
+  project)
+    projectFlag=1
+    projectName="$2"
+    while [[ "$2" ]]; do
+      case $2 in
+      -p | --path )
+        wwwPath="$3"
+        ;;
+      -d | --domain )
+        projectURL="$3"
+        ;;
+      -u | --username )
+        userName="$3"
+        ;;
+      -s | --password )
+        userPassword="$3"
+        ;;
+      -e | --email )
+        userEmail="$3"
+        ;;
+      -l | --language )
+        userLanguage="$3"
+        ;;
+      esac
+      shift
+    done
+    ;;
+  esac
+  shift
+done
+
+
+# Checks
+# ==============================================================================
+
+# check if project name is set
+if ! [[ "$projectName" ]]
+then
+  printf "${BOLD}Please specify a project name.${NORMAL}\n"
+  printf "${RED}Abort.${NC}\n"
+  exit 1
+fi
+
+# check if installation path is defined
+if ! [[ "$wwwPath" ]]
+then
+  printf "${BOLD}Please define an installation path.${NORMAL}\n"
+  printf "${RED}Abort.${NC}\n"
+  exit 1
+fi
+
+
+# Tasks
+# ==============================================================================
+
+if [[ "$prepareFlag" ]]; then
+  echo "Preparing the soil..."
+  #source "${seedPath}"/run/10-prepare.sh
+  installType="prepared"
+fi
+
+if [[ "$plantFlag" ]]; then
+  echo "Planting the seed..."
+  #source "${seedPath}"/run/20-plant.sh
+  installType="created"
+fi
+
+if [[ "$purgeFlag" ]]; then
+  echo -e "${YELLOW}You are about to obliterate the entire ${BOLD}$projectName${NORMAL}${YELLOW} project.${NC}"
+  read -p "${BOLD}Are you sure? [y/N] ${NORMAL}" purgeProject
+
+  # add manual confirmation as failsafe
+  if [ "${purgeProject:-N}" != Y ]; then
+    printf "I sense much fear in you...\n"
+    if [ "${purgeProject:-N}" = y ]; then
+      echo "(and you need to capitalize the 'Y', jedi)"
+    fi
+    printf "${RED}Abort.${NC}\n"
+    exit
+  else
+    printf "${RED}Wipe them out. All of them.${RED}\n"
+    printf "${RED}Execute Order 66.${NC}\n"
+
+    # do it Anakin, even the children...
+    #source "${seedPath}"/run/66-purge.sh
+    printf "${RED}It is done, my master.\n"
+    installType="deleted"
+  fi
+fi
+
+# we made it!
+printf "${GREEN}Project '$projectName' successfully $installType!${NORMAL}\n"
+exit
