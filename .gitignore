@@ -7,3 +7,6 @@ config.gitlab.sh
 
 vendor/
 test/
+
+composer-setup.php
+composer.phar

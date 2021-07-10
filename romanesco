@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Romanesco Seed
+# ROMANESCO SEED
 # ==============================================================================
 #
 # A collection of commands for installing a Romanesco project.
 
 
-# Functions
+# FUNCTIONS
 # ==============================================================================
 
 # generate random password
@@ -26,7 +26,7 @@ function clarify() {
 }
 
 
-# Config
+# CONFIG
 # ==============================================================================
 
 # determine absolute path of this file and chdir to it
@@ -51,11 +51,13 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap clarify EXIT
 
 
-# Variables
+# VARIABLES
 # ==============================================================================
 
 version="1.0"
-seedPath="$DIR"
+seedPath="${DIR%/}"
+
+echo $seedPath
 
 # styling
 RED="\033[0;31m"
@@ -65,66 +67,51 @@ NC='\033[0m' #no color
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
 
-# defaults
-romanescoInstaller="$seedPath"
-romanescoDefaults=
+# local defaults
+localUser=
+homeFolder=
 modxVersion=
+defaultUser=
+defaultEmail=
 gpmPath=
 packagesPath=
 themeColorPrimary=
 themeColorPrimaryLight=
 welcomePage=
-localUser=
-homeFolder=
 
 # load local variables from file
-source "${seedPath%/}"/config.sh
+source "${seedPath}/config.sh"
 
-# Options
-# ==============================================================================
+# command line defaults
+prepareFlag=
+plantFlag=
+purgeFlag=
+projectFlag=
+dbFlag=
 
+# collect command line arguments
 while [[ "$1" ]]; do
   case $1 in
   -v | --version)
     echo "$version"
-    exit
+    exit 0
+    ;;
+  -s | --no-syntax)
+    echo "No syntax highlighting please."
+    RED=
+    GREEN=
+    YELLOW=
+    NC=
+    BOLD=
+    NORMAL=
     ;;
   -h | --help)
-    echo "Usage: [TASK] [SUBJECT] [--OPTION] for project [PROJECT_NAME]"
-    echo "Example: plant seed for project 'Romanesco' -d romanesco.info"
-    echo "You can chain tasks together with 'and'."
-    echo "Example: prepare everything and plant seed for project Romanesco"
-    echo ""
-    echo "Available tasks, subjects and options:"
-    echo "    prepare"
-    echo "      user*             create local Linux user + home folder"
-    echo "      nginx*            add server config to sites-available"
-    echo "      php-fpm*          add separate php-fpm pool for local user"
-    echo "      mysql             create database and db user"
-    echo "      ssl               generate SSL certificate with Let's Encrypt"
-    echo "      everything        perform all of the above"
-    echo "      -f|--force        remove existing data first"
-    echo "    plant"
-    echo "      seed              create a new Romanesco project"
-    echo "      gitify            install a customized fork of Gitify"
-    echo "      node              install NodeJS + npm locally with NVM"
-    echo "      -f|--force        remove existing data first"
-    echo "    purge"
-    echo "      everything        remove folder, database and Nginx config"
-    echo "    for project"
-    echo "      [PROJECT_NAME]    wrap in '' if name consists of multiple words"
-    echo "      -p|--path PATH              default: ${wwwPath}/project-name"
-    echo "      -d|--domain DOMAIN          default: project-name.${domainExt}"
-    echo "      -u|--username USERNAME      default: ${defaultUser}"
-    echo "      -s|--password PASSWORD      default: {generated}"
-    echo "      -e|--email EMAIL            default: ${defaultEmail}"
-    echo "      -l|--language EN            default: ${defaultLanguage:-EN}"
-    echo ""
-    echo "*requires sudo privileges"
-    exit
+    source "${seedPath}/run/00-help.sh"
+    exit 0
     ;;
   prepare)
     prepareFlag=1
+    prepareUser=
     prepareNginx=
     preparePHP=
     prepareMySQL=
@@ -136,6 +123,9 @@ while [[ "$1" ]]; do
       if [[ "$2" == "and" ]]; then break; fi
       if [[ "$2" == "for" ]]; then break; fi
       case $2 in
+      user)
+        prepareUser=1
+        ;;
       nginx)
         prepareNginx=1
         ;;
@@ -203,25 +193,58 @@ while [[ "$1" ]]; do
   project)
     projectFlag=1
     projectName="$2"
+    installPath=
+    projectURL=
+    userName=
+    userPass=
+    userEmail=
+    language=
+    domainFlag=
+    adminFlag=
     while [[ "$2" ]]; do
+      if [[ "$2" == "in" ]]; then break; fi
       case $2 in
       -p | --path )
-        wwwPath="$3"
+        installPath="$3"
         ;;
       -d | --domain )
+        domainFlag=1
         projectURL="$3"
         ;;
       -u | --username )
         userName="$3"
         ;;
       -s | --password )
-        userPassword="$3"
+        userPass="$3"
         ;;
       -e | --email )
         userEmail="$3"
         ;;
       -l | --language )
-        userLanguage="$3"
+        language="$3"
+        ;;
+      -a | --admin )
+        adminFlag=1
+        ;;
+      esac
+      shift
+    done
+    ;;
+  database)
+    dbFlag=1
+    dbName=
+    dbUser=
+    dbPass=
+    while [[ "$2" ]]; do
+      case $2 in
+      -n | --dbname )
+        dbName="$3"
+        ;;
+      -u | --username )
+        dbUser="$3"
+        ;;
+      -s | --password )
+        dbPass="$3"
         ;;
       esac
       shift
@@ -231,20 +254,120 @@ while [[ "$1" ]]; do
   shift
 done
 
+# flags for additional safety / control
+copyFiles="y"
+installMODX="y"
+installPackages="y"
+installSSL="y"
+buildRomanesco="y"
+npmInstall="y"
 
-# Checks
+# project name
+lcaseName="${projectName,,}" #convert to lowercase
+lcaseName="${lcaseName// /-}" #remove whitespace
+
+# domain name
+projectURL="${projectURL:-${lcaseName}.${domainExt}}"
+
+# if local user is NOT defined in config.sh, a new user will be created
+localUserFlag=
+phpSocket="/run/php/php${phpVersion}-fpm.sock"
+if ! [ "$localUser" ]
+then
+  localUser="$lcaseName"
+  localUserFlag=1
+  phpUser="$localUser"
+  # separate php-fpm pool for each local user
+  phpSocket="/var/run/php${phpVersion}-fpm.${phpUser}.sock"
+fi
+
+# install location
+if [ "$installPath" ]
+then
+  installPath="${installPath%/}"
+elif ! [ "$installPath" ] && [ -d "$wwwPath" ]
+then
+  # I am your parent folder Luke, it is your destiny
+  installPath="${wwwPath%/}/$lcaseName"
+elif ! [ "$wwwPath" ]
+then
+  # NNNEVEEEEEER!!!!! I want my own home folder, papa
+  homeFolder="/home/$localUser"
+  installPath="$homeFolder/www"
+else
+  printf "${BOLD}No valid installation path defined.${NORMAL}\n"
+  printf "${RED}Abort.${NC}\n"
+  exit 1
+fi
+
+# nested repositories
+installPathData="$installPath/_romanesco"
+installPathTheme="$installPath/assets/semantic/src/themes/romanesco"
+
+# data folders
+configsPath="$installPath/_defaults/cg_settings"
+settingsPath="$installPath/_defaults/system_settings"
+
+# asset folders
+siteFolder="$installPath/assets/semantic/src/site"
+themeFolder="$installPath/assets/semantic/themes/romanesco"
+
+# GPM packages
+gpmPath="${gpmPath%/}"
+if [ "$gpmPath" ]
+then
+  # grab the latest package versions
+  cbHeadingImageLatest="$(ls -v ${gpmPath}/cbheadingimage/_packages | tail -n 1)"
+  romanescoBackyardLatest="$(ls -v ${gpmPath}/romanesco-backyard/_packages | tail -n 1)"
+  htmlPageDomLatest="$(ls -v ${gpmPath}/htmlpagedom/_packages | tail -n 1)"
+  mailBlocksLatest="$(ls -v ${gpmPath}/mailblocks/_packages | tail -n 1)"
+
+  cbHeadingImagePkg="${gpmPath}/cbheadingimage/_packages/${cbHeadingImageLatest}"
+  romanescoBackyardPkg="${gpmPath}/romanesco-backyard/_packages/${romanescoBackyardLatest}"
+  htmlPageDomPkg="${gpmPath}/htmlpagedom/_packages/${htmlPageDomLatest}"
+  mailBlocksPkg="${gpmPath}/mailblocks/_packages/${htmlPageDomLatest}"
+fi
+
+# database
+if ! [ "$dbFlag" ]
+then
+  dbName="${lcaseName//-/}"
+  dbUser="${dbName}_dbu"
+  dbPass="$(genpasswd)"
+fi
+
+# MODX
+modxVersion="${modxVersion}"
+configXML="$(mktemp)"
+language="${language:-en}"
+userName="${userName:-${lcaseName//-/}_admin}"
+userPass="${userPass:-$(genpasswd)}"
+userEmail="${userEmail:-${defaultEmail}}"
+adminPass=
+httpHost="${projectURL}"
+baseURL="/"
+
+# https
+if [ "$domainFlag" ]
+then
+  uriScheme="https"
+else
+  uriScheme="http"
+fi
+
+# CHECKS
 # ==============================================================================
 
-# check if project name is set
-if ! [[ "$projectName" ]]
+# double check if project name is set
+if [ "$projectFlag" ] && ! [ "$projectName" ] || [ "$plantSeed" ] && ! [ "$projectName" ]
 then
   printf "${BOLD}Please specify a project name.${NORMAL}\n"
   printf "${RED}Abort.${NC}\n"
   exit 1
 fi
 
-# check if installation path is defined
-if ! [[ "$wwwPath" ]]
+# double check if installation path is defined
+if ! [ "$installPath" ]
 then
   printf "${BOLD}Please define an installation path.${NORMAL}\n"
   printf "${RED}Abort.${NC}\n"
@@ -252,29 +375,47 @@ then
 fi
 
 
-# Tasks
+# TASKS
 # ==============================================================================
 
-if [[ "$prepareFlag" ]]; then
+if [ "$prepareFlag" ]
+then
   echo "Preparing the soil..."
-  #source "${seedPath}"/run/10-prepare.sh
+#  source "${seedPath}"/run/10-user.sh
+#  source "${seedPath}"/run/11-server.sh
   installType="prepared"
 fi
 
-if [[ "$plantFlag" ]]; then
-  echo "Planting the seed..."
-  #source "${seedPath}"/run/20-plant.sh
-  installType="created"
+if [ "$plantFlag" ]
+then
+  if [ "$plantGitify" ] ; then
+    echo "Planting Gitify..."
+    source "${seedPath}/run/20-gitify.sh"
+  fi
+  if [ "$plantNode" ] ; then
+    echo "Planting NodeJS..."
+    source "${seedPath}/run/21-node.sh"
+  fi
+  if [ "$plantSeed" ] ; then
+    echo "Planting Romanesco..."
+#    source "${seedPath}/run/23-copy.sh"
+#    source "${seedPath}/run/24-customize.sh"
+#    source "${seedPath}/run/30-build.sh"
+#    source "${seedPath}/run/31-customize.sh"
+#    source "${seedPath}/run/32-permissions.sh"
+  fi
+  installType="planted"
 fi
 
-if [[ "$purgeFlag" ]]; then
+if [ "$purgeFlag" ]
+then
   echo -e "${YELLOW}You are about to obliterate the entire ${BOLD}$projectName${NORMAL}${YELLOW} project.${NC}"
   read -p "${BOLD}Are you sure? [y/N] ${NORMAL}" purgeProject
 
   # add manual confirmation as failsafe
-  if [ "${purgeProject:-N}" != Y ]; then
+  if [ "${purgeProject:-N}" != Y ] ; then
     printf "I sense much fear in you...\n"
-    if [ "${purgeProject:-N}" = y ]; then
+    if [ "${purgeProject:-N}" = y ] ; then
       echo "(and you need to capitalize the 'Y', jedi)"
     fi
     printf "${RED}Abort.${NC}\n"
@@ -284,12 +425,12 @@ if [[ "$purgeFlag" ]]; then
     printf "${RED}Execute Order 66.${NC}\n"
 
     # do it Anakin, even the children...
-    #source "${seedPath}"/run/66-purge.sh
+    source "${seedPath}"/run/66-purge.sh
     printf "${RED}It is done, my master.\n"
     installType="deleted"
   fi
 fi
 
 # we made it!
-printf "${GREEN}Project '$projectName' successfully $installType!${NORMAL}\n"
+printf "${GREEN}Project '${projectName:-}' successfully $installType!${NORMAL}\n"
 exit
