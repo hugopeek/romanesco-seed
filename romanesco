@@ -363,11 +363,13 @@ gpmRepos=(
   "$cbHeadingImagePath"
   "$romanescoBackyardPath"
   "$htmlPageDomPath"
+  "$mailBlocksPath"
 )
 gpmProjects=(
   "cbheadingimage"
   "romanesco-backyard"
   "htmlpagedom"
+  "mailblocks"
 )
 gpmPackages=()
 
