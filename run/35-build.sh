@@ -68,7 +68,7 @@ then
   type mysql >/dev/null 2>&1
 
   # create user and empty database
-  if [ "$forceFlag" ] && [ -d "/var/lib/mysql/$dbName" ] ; then
+  if [ "$forcePlant" ] && [ -d "/var/lib/mysql/$dbName" ] ; then
     mysql -e "DROP DATABASE ${dbName}"
   fi
   mysql -e "CREATE DATABASE IF NOT EXISTS ${dbName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"

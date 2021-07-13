@@ -20,10 +20,8 @@ set -e
 # EXECUTE
 # ==============================================================================
 
-echo "Starting installation..."
-
 # create project folder
-if [ "$forceFlag" ] && [ -d "$installPath" ]
+if [ "$forcePlant" ] && [ -d "$installPath" ]
 then
   echo -e "${YELLOW}Folder already exists.${NC}"
   echo -e "Force overwriting..."
@@ -31,7 +29,7 @@ then
   rm -rf "${installPath}"/.[^.] #remove 2 character hidden files, not . or ..
   rm -rf "${installPath}"/.??* #remove hidden files with 3 characters or more
   rmdir "${installPath}"
-elif ! [ "$forceFlag" ] && [ -d "$installPath" ]
+elif ! [ "$forcePlant" ] && [ -d "$installPath" ]
 then
   echo -e "${YELLOW}Folder already exists.${NC}"
   echo -e "Use the force Luke (-f), or remove the folder manually."
@@ -46,22 +44,30 @@ echo "Installation folder successfully created."
 
 if [ "$copyPackages" = y ] && [ "$gpmPath" ]
 then
-  echo "Cloning dependencies..."
+  echo "Checking dependencies..."
 
+  # create package folder if needed
+  if ! [ -d "$gpmPath" ] ; then
+    sudo -i -u $localUser sh -c "mkdir -p $gpmPath"
+  fi
+
+  # clone / update source repositories
+  i="0"
   for repository in "${gpmRepos[@]}"
   do
-    sudo -i -u $localUser "git clone $repository $gpmPath"
+    project=${gpmProjects[$i]}
+    if ! [ -d "$gpmPath/$project" ] ; then
+      sudo -i -u $localUser sh -c "git clone $repository $gpmPath/$project"
+    else
+      sudo -i -u $localUser sh -c "cd $gpmPath/$project && git pull"
+    fi
+    i=$(($i+1))
   done
 
   # grab the latest package versions
   for project in "${gpmProjects[@]}"
   do
     gpmPackages+=("$(ls -v ${gpmPath}/${project}/_packages | tail -n 1)")
-  done
-
-  for package in "${gpmPackages[@]}"
-  do
-    echo $package
   done
 fi
 
