@@ -103,7 +103,7 @@ data:
             - remote_data
             - session_stale
 EOF2
-cd $installPath && $gitifyPath/Gitify build --no-cleanup
+cd $installPath && $gitifyCmd build --no-cleanup
 rm $installPath/.gitify
 mv $installPath/.gitify.original $installPath/.gitify
 EOF1
@@ -158,7 +158,7 @@ data:
             - session_stale
             - createdon
 EOF2
-cd $installPath && $gitifyPath/Gitify build --no-cleanup
+cd $installPath && $gitifyCmd build --no-cleanup
 rm $installPath/.gitify
 mv $installPath/.gitify.original $installPath/.gitify
 EOF1

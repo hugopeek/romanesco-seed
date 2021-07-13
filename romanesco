@@ -303,6 +303,9 @@ installMODX="y"
 installPackages="y"
 buildRomanesco="y"
 
+# Gitify command
+gitifyCmd="$gitifyPath/Gitify"
+
 # project name
 lcaseName="${projectName,,}" #convert to lowercase
 lcaseName="${lcaseName// /-}" #remove whitespace

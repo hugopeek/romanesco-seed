@@ -48,7 +48,7 @@ EOF
 fi
 
 # install Gitify
-if [ -z $(sudo -i -u ${localUser} sh -l -c "command -v $gitifyPath/Gitify") ]
+if [ -z $(sudo -i -u ${localUser} sh -l -c "command -v $gitifyCmd") ]
 then
   echo "Installing Gitify..."
   sudo -i -u $localUser sh <<EOF
@@ -59,9 +59,9 @@ composer install --no-dev
 chmod +x Gitify
 EOF
   printf "${GREEN}Gitify successfully installed.${NC}\n"
-  sudo -i -u $localUser sh -l -c "$gitifyPath/Gitify --version"
+  sudo -i -u $localUser sh -l -c "$gitifyCmd --version"
 else
   printf "${YELLOW}Gitify seems to be installed already:${NC}\n"
-  sudo -i -u $localUser sh -l -c "command -v $gitifyPath/Gitify"
-  sudo -i -u $localUser sh -l -c "$gitifyPath/Gitify --version"
+  sudo -i -u $localUser sh -l -c "command -v $gitifyCmd"
+  sudo -i -u $localUser sh -l -c "$gitifyCmd --version"
 fi

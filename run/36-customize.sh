@@ -47,7 +47,7 @@ data:
             - 'context_key:IN': [web]
             - 'AND:alias:IN': [index]
 EOF2
-cd $installPath && $gitifyPath/Gitify build
+cd $installPath && $gitifyCmd build
 rm $installPath/.gitify
 mv $installPath/.gitify.original $installPath/.gitify
 EOF1

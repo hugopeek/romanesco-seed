@@ -24,7 +24,7 @@ set -e
 echo "Starting build process..."
 
 # create MODX config.xml
-cat >$configXML <<EOF
+cat > $configXML <<EOF
 <modx>
     <database_type>mysql</database_type>
     <database_server>localhost</database_server>
@@ -81,7 +81,7 @@ then
   echo "Database $dbName and user successfully created."
 
   # run gitify install
-  sudo -i -u $localUser sh -c "cd $installPath && $gitifyPath/Gitify modx:install $modxVersion --config=$configXML"
+  sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd modx:install $modxVersion --config=$configXML"
 
   echo "Login credentials for MODX:"
   printf "Username: ${BOLD}$userName${NORMAL}\n"
@@ -157,7 +157,7 @@ core*
 EOF
     sudo -i -u $localUser rsync -av --exclude-from=$installPath/.rsync_exclude $packagesPath/*.transport.zip $installPath/core/packages
     sudo -i -u $localUser sh -c "cd $installPath && rm -f $installPath/.rsync_exclude"
-    sudo -i -u $localUser sh -c "cd $installPath && $gitifyPath/Gitify package:install --local"
+    sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd package:install --local"
 
     # create temporary .gitify and install modmore extras
     sudo -i -u $localUser sh <<EOF1
@@ -171,13 +171,13 @@ packages:
             - contentblocks
             - redactor
 EOF2
-cd $installPath && $gitifyPath/Gitify package:install --all
+cd $installPath && $gitifyCmd package:install --all
 rm $installPath/.gitify
 mv $installPath/.gitify.original $installPath/.gitify
 EOF1
   else
     # otherwise, download and install all packages defined in .gitify
-    sudo -i -u $localUser sh -c "cd $installPath && $gitifyPath/Gitify package:install --all"
+    sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd package:install --all"
   fi
 
   echo "MODX packages successfully installed."
@@ -216,14 +216,8 @@ if [ "$buildRomanesco" = y ] ; then
   sudo -i -u $localUser sh <<EOF
 cd $installPath && git add -A
 cd $installPath && git commit -m "Initial project extract"
-mv $installPath/.gitify $installPath/.gitify.original
-cp $installPath/_romanesco/_gitify/.gitify.romanesco_build $installPath/.gitify
-cd $installPath && $gitifyPath/Gitify build
-rm $installPath/.gitify
-cp $installPath/_romanesco/_gitify/.gitify.defaults_build $installPath/.gitify
-cd $installPath && $gitifyPath/Gitify build
-rm $installPath/.gitify
-mv $installPath/.gitify.original $installPath/.gitify
+cd $installPathData/_gitify/build/romanesco && $gitifyCmd build
+cd $installPathData/_gitify/build/defaults && $gitifyCmd build
 EOF
 
   # add gateway settings to web and hub contexts
@@ -243,7 +237,7 @@ EOF
   # it needs to be done before Backyard is installed (which is in the next step)
 
   # build Backyard resources
-  sudo -i -u $localUser sh -c "cd $installPathData/_gitify/build/backyard && $gitifyPath/Gitify build"
+  sudo -i -u $localUser sh -c "cd $installPathData/_gitify/build/backyard && $gitifyCmd build"
 
   # copy local Romanesco packages not present in official repo
   for package in "${gpmPackages[@]}"
@@ -253,9 +247,9 @@ EOF
 
   # install local packages and wrap up
   sudo -i -u $localUser sh <<EOF
-cd $installPath && $gitifyPath/Gitify package:install --local
+cd $installPath && $gitifyCmd package:install --local
 
-cd $installPath && $gitifyPath/Gitify extract
+cd $installPath && $gitifyCmd extract
 cd $installPath && git add -A
 cd $installPath && git commit -m "Extract fresh Romanesco installation"
 
