@@ -92,6 +92,9 @@ gpmPath=/var/packages
 # feature is only meant for testing purposes. Leave blank otherwise!
 #packagesPath=/var/www/apo-sunrise/core/packages
 
+# Another note: ModMore packages cannot be installed this way. So you still
+# need an internet connection to download ContentBlocks and Redactor.
+
 
 # THEME
 # ==============================================================================

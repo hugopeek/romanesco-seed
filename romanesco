@@ -73,9 +73,15 @@ defaultUser=
 defaultEmail=
 gpmPath=
 packagesPath=
+welcomePage="$seedPath/data/romanesco.html"
+
+# theme variables
 themeColorPrimary=
 themeColorPrimaryLight=
-welcomePage="$seedPath/data/romanesco.html"
+themeColorSecondary=
+themeColorSecondaryLight=
+themeFontHeader=
+themeFontPage=
 
 # load local variables from file
 source "${seedPath}/config.sh"
@@ -333,13 +339,11 @@ gpmRepos=(
   "$cbHeadingImagePath"
   "$romanescoBackyardPath"
   "$htmlPageDomPath"
-  "$mailBlocksPath"
 )
 gpmProjects=(
   "cbheadingimage"
   "romanesco-backyard"
   "htmlpagedom"
-  "mailblocks"
 )
 gpmPackages=()
 

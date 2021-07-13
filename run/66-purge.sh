@@ -34,7 +34,7 @@ else
 fi
 
 # remove database + user
-if [ $(mysql -e "use ${dbName}" 2> /dev/null) ]
+if [ -d "/var/lib/mysql/$dbName" ]
 then
   echo "Removing database..."
   mysql -e "DROP DATABASE IF EXISTS ${dbName}"

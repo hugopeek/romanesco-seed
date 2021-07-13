@@ -67,7 +67,9 @@ then
   # grab the latest package versions
   for project in "${gpmProjects[@]}"
   do
-    gpmPackages+=("$(ls -v ${gpmPath}/${project}/_packages | tail -n 1)")
+    pkgFolder="$gpmPath/$project/_packages"
+    pkgVersion=$(ls -v ${pkgFolder} | tail -n 1)
+    gpmPackages+=("${pkgFolder}/$pkgVersion")
   done
 fi
 

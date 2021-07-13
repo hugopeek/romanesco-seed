@@ -90,7 +90,7 @@ To do this, copy the included sample config:
 cp config.example config.sh
 ```
 
-Open it with your editor of choice and configure all necessary options. The descriptions above the variables should be pretty self-explanatory. Don't forget to add the ModMore API key from the previous step.
+Open it with your editor of choice and configure all necessary options. The descriptions above the variables should provide you with enough information. Don't forget to add the ModMore API key from the previous step here.
 
 ## Database
 
