@@ -169,6 +169,7 @@ while [[ "$1" ]]; do
     plantSeed=
     npmFlag=
     forcePlant=
+    projectFlag=1
     while [[ "$2" ]]; do
       # move to next task
       if [[ "$2" == "and" ]]; then break; fi
@@ -176,7 +177,6 @@ while [[ "$1" ]]; do
       case $2 in
       seed)
         plantSeed=1
-        projectFlag=1
         ;;
       -n | --npm)
         npmFlag=1
@@ -194,15 +194,30 @@ while [[ "$1" ]]; do
     ;;
   purge)
     purgeFlag=1
+    purgeServer=
+    purgeDatabase=
+    purgeFiles=
     purgeAll=
+    projectFlag=1
     while [[ "$2" ]]; do
       # move to next task
       if [[ "$2" == "and" ]]; then break; fi
       if [[ "$2" == "for" ]]; then break; fi
       case $2 in
+      server)
+        purgeServer=1
+        ;;
+      database)
+        purgeDatabase=1
+        ;;
+      files)
+        purgeFiles=1
+        ;;
       everything)
+        purgeServer=1
+        purgeDatabase=1
+        purgeFiles=1
         purgeAll=1
-        projectFlag=1
         ;;
       '' | *)
         printf "${RED}Computer says no.${NC}\n"
@@ -429,7 +444,12 @@ fi
 
 if [ "$purgeFlag" ]
 then
-  echo -e "${YELLOW}You are about to obliterate the entire ${BOLD}$projectName${NORMAL}${YELLOW} project.${NC}"
+  purgeScope="a part of the"
+  if [ "$purgeAll" ] ; then
+    purgeScope="the entire"
+  fi
+
+  echo -e "${YELLOW}You are about to obliterate $purgeScope ${BOLD}$projectName${NORMAL}${YELLOW} project.${NC}"
   read -p "${BOLD}Are you sure? [y/N] ${NORMAL}" purgeProject
 
   # add manual confirmation as failsafe
