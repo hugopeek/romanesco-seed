@@ -23,7 +23,8 @@ set -e
 # ==============================================================================
 
 # remove existing server block if force option is used
-if [ "$forcePrepare" ] && [ -f "/etc/nginx/sites-available/$lcaseName" ]; then
+if [ "$forcePrepare" ] && [ -f "/etc/nginx/sites-available/$lcaseName" ]
+then
   echo -e "${YELLOW}Server config already exists.${NC}"
   echo -e "Force removing old server block..."
 
@@ -32,7 +33,8 @@ if [ "$forcePrepare" ] && [ -f "/etc/nginx/sites-available/$lcaseName" ]; then
 fi
 
 # create separate php-fpm pool
-if [ "$preparePHP" ] && ! [ -f "/etc/php/${phpVersion}/fpm/pool.d/${localUser}.conf" ]; then
+if [ "$preparePHP" ] && ! [ -f "/etc/php/${phpVersion}/fpm/pool.d/${localUser}.conf" ]
+then
   echo "Adding separate php-fpm pool..."
 
   cat > "/etc/php/${phpVersion}/fpm/pool.d/${localUser}.conf" <<EOF
@@ -58,7 +60,8 @@ EOF
 fi
 
 # create server block
-if [ "$prepareNginx" ] && ! [ -f "/etc/nginx/sites-available/$lcaseName" ]; then
+if [ "$prepareNginx" ] && ! [ -f "/etc/nginx/sites-available/$lcaseName" ]
+then
   echo "Adding NGINX server block..."
 
   cat > "/etc/nginx/sites-available/$lcaseName" <<EOF

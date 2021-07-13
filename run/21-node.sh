@@ -21,14 +21,14 @@ set -e
 # ==============================================================================
 
 # set up NodeJS and NPM locally with NVM
-if [[ "$npmFlag" ]] && [[ -z $(sudo -i -u ${localUser} sh -l -c "command -v npm") ]]
+if [ -z $(sudo -i -u ${localUser} sh -l -c "command -v node") ]
 then
-  echo "Node needs to be installed."
+  echo "Node.js needs to be installed."
   echo "Setting up NVM..."
 
   # download nvm
   sudo -i -u $localUser sh <<EOF
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 EOF
 
   # add nvm path to .profile so it can be accessed by installer
@@ -52,5 +52,13 @@ nvm use --lts
 npm install -g gulp-cli
 EOF
 else
-  echo "Node already installed."
+  printf "${YELLOW}Node.js seems to be installed already:${NC}\n"
+  sudo -i -u $localUser sh -l -c "command -v node"
+  sudo -i -u $localUser sh -l -c "node --version"
+
+  echo "Making sure gulp-cli is also installed..."
+  if [ -z $(sudo -i -u ${localUser} sh -l -c "command -v gulp") ]
+  then
+    sudo -i -u $localUser sh -l -c "npm install -g gulp-cli"
+  fi
 fi

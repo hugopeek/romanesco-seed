@@ -3,7 +3,7 @@
 # ROMANESCO - PURGE
 # ==============================================================================
 #
-# Wipe entire installations from your server and remove all traces of them.
+# Wipe an entire installation from your server and remove all traces of it.
 
 
 # CONFIG
@@ -20,47 +20,46 @@ set -e
 # EXECUTE
 # ==============================================================================
 
-echo "Removing project folder: $installPath/"
-
+# remove installation folder
 if [ -d "$installPath" ]
 then
-  rm -rf $installPath/*
-  rm -rf $installPath/.[^.] #remove 2 character hidden files, not . or ..
-  rm -rf $installPath/.??* #remove hidden files with 3 characters or more
-  rmdir $installPath
+  echo "Removing project folder: $installPath/"
+  rm -rf "$installPath"/*
+  rm -rf "$installPath"/.[^.] #remove 2 character hidden files, not . or ..
+  rm -rf "$installPath"/.??* #remove hidden files with 3 characters or more
+  rmdir "$installPath"
 else
-  printf "${YELLOW}Installation folder not found.${NC}\n"
+  printf "${YELLOW}Installation folder not found:${NC}\n"
+  echo "$installPath"/
 fi
 
-echo "Removing database..."
-
-if [ -d "/var/lib/mysql/$dbName" ]
+# remove database + user
+if [ $(mysql -e "use ${dbName}" 2> /dev/null) ]
 then
-  mysql -e "DROP DATABASE $dbName"
+  echo "Removing database..."
+  mysql -e "DROP DATABASE IF EXISTS ${dbName}"
+  echo "Removing database user..."
+  mysql -e "DROP USER IF EXISTS '${dbUser}'@'localhost'"
 else
   printf "${YELLOW}Database not found.${NC}\n"
 fi
 
-echo "Removing database user..."
-
-mysql -e "DROP USER IF EXISTS '${dbUser}'@'localhost'"
-
-echo "Removing NGINX server block..."
-
+# remove NGINX server block
 if [ -f "/etc/nginx/sites-available/$lcaseName" ]
 then
-  rm /etc/nginx/sites-available/$lcaseName
-  rm /etc/nginx/sites-enabled/$lcaseName
+  echo "Removing NGINX server block..."
+  rm "/etc/nginx/sites-available/$lcaseName"
+  rm "/etc/nginx/sites-enabled/$lcaseName"
 else
   printf "${YELLOW}Server block not found.${NC}\n"
 fi
 
-echo "Removing php-fpm pool..."
-
+# remove PHP-FPM pool
 if [ -f "/etc/php/$phpVersion/fpm/pool.d/$lcaseName.conf" ]
 then
-  rm /etc/php/$phpVersion/fpm/pool.d/$lcaseName.conf
-  service php${phpVersion}-fpm reload
+  echo "Removing php-fpm pool..."
+  rm "/etc/php/$phpVersion/fpm/pool.d/$lcaseName.conf"
+  service "php${phpVersion}-fpm reload"
 else
-  printf "${YELLOW}php-fpm pool not found.${NC}\n"
+  printf "${YELLOW}PHP-FPM pool not found.${NC}\n"
 fi

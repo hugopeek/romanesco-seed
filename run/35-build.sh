@@ -84,8 +84,8 @@ then
   sudo -i -u $localUser sh -c "cd $installPath && $gitifyPath/Gitify modx:install $modxVersion --config=$configXML"
 
   echo "You can log in to the manager using the following credentials:"
-  printf "Username: ${bold}$userName${normal}\n"
-  printf "Password: ${bold}$userPass${normal}\n"
+  printf "Username: ${BOLD}$userName${NORMAL}\n"
+  printf "Password: ${BOLD}$userPass${NORMAL}\n"
 
   # adjust autoincrement values of MODX core tables
   mysql -D $dbName -u $dbUser -p$dbPass <<EOF
@@ -138,10 +138,11 @@ EOF
 fi
 
 # install packages
-if [ "$installPackages" = y ]; then
+if [ "$installPackages" = y ]
+then
 
   # if a local path is defined, copy and install packages from there
-  if [ "$packagesPath" ]; then
+  if [ "$packagesPath" ] ; then
     echo "Copying local packages to core/packages folder..."
 
     sudo -i -u $localUser sh -c "cat > $installPath/.rsync_exclude" <<EOF
@@ -211,7 +212,7 @@ EOF
 fi
 
 # build Romanesco with Gitify
-if [ "$buildRomanesco" = y ]; then
+if [ "$buildRomanesco" = y ] ; then
   sudo -i -u $localUser sh <<EOF
 cd $installPath && git add -A
 cd $installPath && git commit -m "Initial project extract"
@@ -250,12 +251,14 @@ rm $installPath/.gitify
 mv $installPath/.gitify.original $installPath/.gitify
 EOF
 
-  # install local Romanesco packages not present in official repo
+  # copy local Romanesco packages not present in official repo
+  for package in "${gpmPackages[@]}"
+  do
+    sudo -i -u $localUser sh -c "cp $package $installPath/core/packages/"
+  done
+
+  # install local packages and wrap up
   sudo -i -u $localUser sh <<EOF
-cp $cbHeadingImagePkg $installPath/core/packages/
-cp $romanescoBackyardPkg $installPath/core/packages/
-cp $htmlPageDomPkg $installPath/core/packages/
-cp $mailBlocksPkg $installPath/core/packages/
 cd $installPath && $gitifyPath/Gitify package:install --local
 
 cd $installPath && $gitifyPath/Gitify extract
@@ -279,12 +282,9 @@ sudo -i -u $localUser mkdir $installPath/assets/cache
 echo "Making config file inaccessible to other users..."
 chmod 0600 $installPath/core/config/config.inc.php
 
-if [ "$npmFlag" ]; then
+if [ "$npmFlag" ]
+then
   echo "Building Semantic UI assets..."
-
-  # hit theme.variables URL to make sure it's generated
-  curl $uriScheme://$projectURL/assets/css/theme.variables >/dev/null
-
-  sudo -i -u $localUser sh -l -c "cd $installPath/assets/semantic && gulp build-css"
+  sudo -i -u $localUser sh -l -c "cd $installPath && gulp build"
   echo "Theme files updated."
 fi

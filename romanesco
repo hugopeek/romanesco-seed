@@ -57,8 +57,6 @@ trap clarify EXIT
 version="1.0"
 seedPath="${DIR%/}"
 
-echo $seedPath
-
 # styling
 RED="\033[0;31m"
 GREEN="\033[1;32m"
@@ -77,7 +75,7 @@ gpmPath=
 packagesPath=
 themeColorPrimary=
 themeColorPrimaryLight=
-welcomePage=
+welcomePage="$seedPath/data/romanesco.html"
 
 # load local variables from file
 source "${seedPath}/config.sh"
@@ -114,9 +112,9 @@ while [[ "$1" ]]; do
     prepareUser=
     prepareNginx=
     preparePHP=
-    prepareMySQL=
     prepareSSL=
-    prepareAll=
+    prepareGitify=
+    prepareNode=
     forcePrepare=
     while [[ "$2" ]]; do
       # move to next task
@@ -125,24 +123,36 @@ while [[ "$1" ]]; do
       case $2 in
       user)
         prepareUser=1
+        projectFlag=1
         ;;
       nginx)
         prepareNginx=1
+        projectFlag=1
         ;;
       php-fpm)
         preparePHP=1
-        ;;
-      mysql)
-        prepareMySQL=1
+        projectFlag=1
         ;;
       ssl)
         prepareSSL=1
+        projectFlag=1
+        ;;
+      gitify)
+        prepareGitify=1
+        ;;
+      node)
+        prepareNode=1
         ;;
       everything)
         prepareAll=1
+        projectFlag=1
         ;;
       -f | --force)
         forcePrepare=1
+        ;;
+      '' | *)
+        printf "${RED}Computer says no.${NC}\n"
+        exit 0
         ;;
       esac
       shift
@@ -151,8 +161,7 @@ while [[ "$1" ]]; do
   plant)
     plantFlag=1
     plantSeed=
-    plantGitify=
-    plantNode=
+    npmFlag=
     forcePlant=
     while [[ "$2" ]]; do
       # move to next task
@@ -161,15 +170,17 @@ while [[ "$1" ]]; do
       case $2 in
       seed)
         plantSeed=1
+        projectFlag=1
         ;;
-      gitify)
-        plantGitify=1
-        ;;
-      node)
-        plantNode=1
+      -n | --npm)
+        npmFlag=1
         ;;
       -f | --force)
         forcePlant=1
+        ;;
+      '' | *)
+        printf "${RED}Computer says no.${NC}\n"
+        exit 0
         ;;
       esac
       shift
@@ -185,6 +196,11 @@ while [[ "$1" ]]; do
       case $2 in
       everything)
         purgeAll=1
+        projectFlag=1
+        ;;
+      '' | *)
+        printf "${RED}Computer says no.${NC}\n"
+        exit 0
         ;;
       esac
       shift
@@ -255,12 +271,11 @@ while [[ "$1" ]]; do
 done
 
 # flags for additional safety / control
+copyPackages="y"
 copyFiles="y"
 installMODX="y"
 installPackages="y"
-installSSL="y"
 buildRomanesco="y"
-npmInstall="y"
 
 # project name
 lcaseName="${projectName,,}" #convert to lowercase
@@ -314,19 +329,19 @@ themeFolder="$installPath/assets/semantic/themes/romanesco"
 
 # GPM packages
 gpmPath="${gpmPath%/}"
-if [ "$gpmPath" ]
-then
-  # grab the latest package versions
-  cbHeadingImageLatest="$(ls -v ${gpmPath}/cbheadingimage/_packages | tail -n 1)"
-  romanescoBackyardLatest="$(ls -v ${gpmPath}/romanesco-backyard/_packages | tail -n 1)"
-  htmlPageDomLatest="$(ls -v ${gpmPath}/htmlpagedom/_packages | tail -n 1)"
-  mailBlocksLatest="$(ls -v ${gpmPath}/mailblocks/_packages | tail -n 1)"
-
-  cbHeadingImagePkg="${gpmPath}/cbheadingimage/_packages/${cbHeadingImageLatest}"
-  romanescoBackyardPkg="${gpmPath}/romanesco-backyard/_packages/${romanescoBackyardLatest}"
-  htmlPageDomPkg="${gpmPath}/htmlpagedom/_packages/${htmlPageDomLatest}"
-  mailBlocksPkg="${gpmPath}/mailblocks/_packages/${htmlPageDomLatest}"
-fi
+gpmRepos=(
+  "$cbHeadingImagePath"
+  "$romanescoBackyardPath"
+  "$htmlPageDomPath"
+  "$mailBlocksPath"
+)
+gpmProjects=(
+  "cbheadingimage"
+  "romanesco-backyard"
+  "htmlpagedom"
+  "mailblocks"
+)
+gpmPackages=()
 
 # database
 if ! [ "$dbFlag" ]
@@ -355,15 +370,16 @@ else
   uriScheme="http"
 fi
 
+
 # CHECKS
 # ==============================================================================
 
 # double check if project name is set
-if [ "$projectFlag" ] && ! [ "$projectName" ] || [ "$plantSeed" ] && ! [ "$projectName" ]
+if [ "$projectFlag" ] && ! [ "$projectName" ]
 then
   printf "${BOLD}Please specify a project name.${NORMAL}\n"
   printf "${RED}Abort.${NC}\n"
-  exit 1
+  exit 0
 fi
 
 # double check if installation path is defined
@@ -371,7 +387,7 @@ if ! [ "$installPath" ]
 then
   printf "${BOLD}Please define an installation path.${NORMAL}\n"
   printf "${RED}Abort.${NC}\n"
-  exit 1
+  exit 0
 fi
 
 
@@ -381,29 +397,29 @@ fi
 if [ "$prepareFlag" ]
 then
   echo "Preparing the soil..."
-#  source "${seedPath}"/run/10-user.sh
-#  source "${seedPath}"/run/11-server.sh
+  if [ "$prepareUser" ] ; then
+    source "${seedPath}/run/10-user.sh"
+  fi
+  if [ "$prepareNginx" ] || [ "$preparePHP"] || [ "$prepareSSL"] ; then
+    source "${seedPath}/run/11-server.sh"
+  fi
+  if [ "$prepareGitify" ] ; then
+    source "${seedPath}/run/20-gitify.sh"
+  fi
+  if [ "$prepareNode" ] ; then
+    source "${seedPath}/run/21-node.sh"
+  fi
   installType="prepared"
 fi
 
-if [ "$plantFlag" ]
+if [ "$plantFlag" ] &&  [ "$plantSeed" ]
 then
-  if [ "$plantGitify" ] ; then
-    echo "Planting Gitify..."
-    source "${seedPath}/run/20-gitify.sh"
-  fi
-  if [ "$plantNode" ] ; then
-    echo "Planting NodeJS..."
-    source "${seedPath}/run/21-node.sh"
-  fi
-  if [ "$plantSeed" ] ; then
-    echo "Planting Romanesco..."
-#    source "${seedPath}/run/23-copy.sh"
-#    source "${seedPath}/run/24-customize.sh"
-#    source "${seedPath}/run/30-build.sh"
-#    source "${seedPath}/run/31-customize.sh"
-#    source "${seedPath}/run/32-permissions.sh"
-  fi
+  echo "Planting Romanesco..."
+  source "${seedPath}/run/30-copy.sh"
+  source "${seedPath}/run/31-customize.sh"
+  source "${seedPath}/run/35-build.sh"
+  source "${seedPath}/run/36-customize.sh"
+  source "${seedPath}/run/37-permissions.sh"
   installType="planted"
 fi
 

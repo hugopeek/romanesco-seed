@@ -138,12 +138,14 @@ So what Gitify basically does, is to leverage the power of Git to transport data
 Long story short: it's an indispensable tool, so we need to install it first. Double check that you've defined a suitable Gitify path in config.sh and then run the following command:
 
 ```shell
-./romanesco plant gitify
+./romanesco prepare gitify
 ```
 
 >**NB:** At this point, a customized fork of Gitify is used, containing a few abilities that haven't been merged with the main repository. So if you're using Gitify already, you can't use it for installing Romanesco.
-> To avoid conflicts, please install the forked version separately. This can be done by defining a gitifyPath to a new (non-existing) location in config.sh and then running the `plant gitify` command.
-> The installer only references the customized version directly (with full path), so your original, global Gitify command will continue to work as before (using the main repository).
+> 
+> To avoid conflicts, please install the forked version separately. To do this, define a gitifyPath in config.sh to a new (non-existing) location and then run the `prepare gitify` command.
+> 
+> The installer only references the customized version directly (with full path), so your original (global) Gitify command will continue to work as before (using the main repository).
 
 ## NodeJS
 
