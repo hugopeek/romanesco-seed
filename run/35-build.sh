@@ -83,7 +83,7 @@ then
   # run gitify install
   sudo -i -u $localUser sh -c "cd $installPath && $gitifyPath/Gitify modx:install $modxVersion --config=$configXML"
 
-  echo "You can log in to the manager using the following credentials:"
+  echo "Login credentials for MODX:"
   printf "Username: ${BOLD}$userName${NORMAL}\n"
   printf "Password: ${BOLD}$userPass${NORMAL}\n"
 
@@ -243,13 +243,7 @@ EOF
   # it needs to be done before Backyard is installed (which is in the next step)
 
   # build Backyard resources
-  sudo -i -u $localUser sh <<EOF
-mv $installPath/.gitify $installPath/.gitify.original
-cp $installPath/_romanesco/_gitify/.gitify.backyard_build $installPath/.gitify
-cd $installPath && $gitifyPath/Gitify build
-rm $installPath/.gitify
-mv $installPath/.gitify.original $installPath/.gitify
-EOF
+  sudo -i -u $localUser sh -c "cd $installPathData/_gitify/build/backyard && $gitifyPath/Gitify build"
 
   # copy local Romanesco packages not present in official repo
   for package in "${gpmPackages[@]}"

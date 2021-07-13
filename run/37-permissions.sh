@@ -168,3 +168,7 @@ EOF1
   sudo -i -u $localUser sh -c "rm -f $installPath/_data/member_groups/1.yaml"
 fi
 
+# return login credentials
+echo "You can log in to the MODX manager using the following credentials:"
+printf "Username: ${BOLD}$userName${NORMAL}\n"
+printf "Password: ${BOLD}$userPass${NORMAL}\n"

@@ -29,11 +29,6 @@ mailBlocksPath=https://github.com/hugopeek/mailblocks.git
 # Tip: if you also run Nginx (or Apache) under this user, you barely need to
 # fiddle with permissions anymore.
 
-# If you set a $localUser, you must also define an absolute path to your local
-# WWW folder. This is the folder containing all your projects. New projects will
-# be placed there by the installer, in a sub folder with the project name.
-#wwwPath=/var/www/
-
 # By default, PHP is also run under the isolated Linux user. This has the same
 # security benefits as mentioned above, plus it separates server load between
 # projects. If PHP hangs for some reason (timeouts, memory issues, etc), it's
@@ -47,13 +42,18 @@ mailBlocksPath=https://github.com/hugopeek/mailblocks.git
 # PHP versions can differ per environment, so please specify the local version.
 phpVersion=7.4
 
-# Default domain extension, if no custom domain is defined.
-# For example: 'loc' will result in the local URL 'project-name.loc'.
-domainExt=loc
+# If you set a $localUser, you must also define an absolute path to your local
+# WWW folder. This is the folder containing all your projects. New projects will
+# be placed there by the installer, in a sub folder with the project name.
+#wwwPath=/var/www/
 
 # Path to the local Gitify folder containing my forked version (!). See readme
 # for more details.
 gitifyPath=/opt/gitify
+
+# Default domain extension, if no custom domain is defined.
+# For example: 'loc' will result in the local URL 'project-name.loc'.
+domainExt=loc
 
 
 # MODX

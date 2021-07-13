@@ -67,13 +67,15 @@ NORMAL=$(tput sgr0)
 
 # local defaults
 localUser=
-homeFolder=
+phpUser=
+phpVersion=
+wwwPath=
+gitifyPath=
 modxVersion=
 defaultUser=
 defaultEmail=
 gpmPath=
 packagesPath=
-welcomePage="$seedPath/data/romanesco.html"
 
 # theme variables
 themeColorPrimary=
@@ -82,6 +84,9 @@ themeColorSecondary=
 themeColorSecondaryLight=
 themeFontHeader=
 themeFontPage=
+
+# custom homepage
+welcomePage="$seedPath/data/romanesco.html"
 
 # load local variables from file
 source "${seedPath}/config.sh"
@@ -318,6 +323,7 @@ then
 fi
 
 # install location
+homeFolder=
 if [ "$installPath" ]
 then
   installPath="${installPath%/}"
