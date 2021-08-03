@@ -62,7 +62,7 @@ fi
 # prepare project for updating itself
 if [ "$buildRomanesco" = y ]
 then
-  echo "Preparing project for updating itself..."
+  echo "Teach project how to update itself..."
   sudo -i -u $localUser sh -c "mkdir $installPath/_operations"
   sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $installPath/_operations"
 
@@ -86,7 +86,7 @@ EOF
 
   # symlink operations scripts
   sudo -i -u $localUser sh -c "ln -s $installPath/_operations/operations.sh $installPath/operations"
-  sudo -i -u $localUser sh -c "chmod + x $installPath/operations"
+  sudo -i -u $localUser sh -c "chmod +x $installPath/operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/run $installPath/_operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/tools $installPath/_operations"
 fi
