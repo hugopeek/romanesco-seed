@@ -75,15 +75,18 @@ then
 
 # Local project variables
 installPath=$installPath
+projectName="$projectName"
 lcaseName=$lcaseName
 projectURL=$projectURL
 
 EOF
 
   # copy operations base config
-  sudo -i -u $localUser sh -c "cp $installPathData/_operations/operations $installPath/_operations"
+  sudo -i -u $localUser sh -c "cp $installPathData/_operations/operations.sh $installPath/_operations/operations.sh"
 
   # symlink operations scripts
+  sudo -i -u $localUser sh -c "ln -s $installPath/_operations/operations.sh $installPath/operations"
+  sudo -i -u $localUser sh -c "chmod + x $installPath/operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/run $installPath/_operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/tools $installPath/_operations"
 fi
