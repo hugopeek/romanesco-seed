@@ -58,3 +58,32 @@ fi
 #then
 #  echo "Activating email capabilities..."
 #fi
+
+# prepare project for updating itself
+if [ "$buildRomanesco" = y ]
+then
+  echo "Preparing project for updating itself..."
+  sudo -i -u $localUser sh -c "mkdir $installPath/_operations"
+  sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $installPath/_operations"
+
+  # append local project variables to config
+  cat >> ${seedPath}/config.sh <<EOF
+
+
+# PROJECT
+# ==============================================================================
+
+# Local project variables
+installPath=$installPath
+lcaseName=$lcaseName
+projectURL=$projectURL
+
+EOF
+
+  # copy operations base config
+  sudo -i -u $localUser sh -c "cp $installPathData/_operations/operations $installPath/_operations"
+
+  # symlink operations scripts
+  sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/run $installPath/_operations"
+  sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/tools $installPath/_operations"
+fi
