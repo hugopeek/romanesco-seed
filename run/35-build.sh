@@ -231,6 +231,17 @@ INSERT INTO \`$dbName\`.\`modx_context_setting\` (\`context_key\`, \`key\`, \`va
 INSERT INTO \`$dbName\`.\`modx_context_setting\` (\`context_key\`, \`key\`, \`value\`, \`xtype\`, \`namespace\`, \`area\`, \`editedon\`) VALUES ('hub', 'http_host', 'hub.${httpHost}', 'textfield', 'core', 'gateway', NULL);
 INSERT INTO \`$dbName\`.\`modx_context_setting\` (\`context_key\`, \`key\`, \`value\`, \`xtype\`, \`namespace\`, \`area\`, \`editedon\`) VALUES ('hub', 'site_start', '', 'textfield', 'core', 'site', NULL);
 EOF
+
+  # add system and config settings
+  echo "Adding system and configuration settings..."
+  mysql -D $dbName -u $dbUser -p$dbPass -v <<EOF
+UPDATE \`$dbName\`.\`modx_system_settings\` SET \`value\`='1.0.0' WHERE \`key\`='romanesco.assets_version_css';
+UPDATE \`$dbName\`.\`modx_system_settings\` SET \`value\`='1.0.0' WHERE \`key\`='romanesco.assets_version_js';
+UPDATE \`$dbName\`.\`modx_clientconfig_setting\` SET \`value\`='0' WHERE \`key\`='custom_cache';
+UPDATE \`$dbName\`.\`modx_clientconfig_setting\` SET \`value\`='0' WHERE \`key\`='minify_css_js';
+UPDATE \`$dbName\`.\`modx_clientconfig_setting\` SET \`value\`='0' WHERE \`key\`='cache_buster';
+EOF
+
   echo "Database rows successfully added."
 
   # if you want to import existing content, do it at this point

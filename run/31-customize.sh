@@ -28,18 +28,8 @@ if [ "$buildRomanesco" = y ]
 then
   echo "Setting site_name..."
   sed -i -e "/value/d" -e "/key: site_name/a value: '$projectName'" $settingsPath/site-name.yaml
-  echo "Setting CSS assets version..."
-  sed -i -e "/value/d" -e "/key: romanesco.assets_version_css/a value: '1.0.0'" $settingsPath/romanesco.assets_version_css.yaml
-  echo "Setting JS assets version..."
-  sed -i -e "/value/d" -e "/key: romanesco.assets_version_js/a value: '1.0.0'" $settingsPath/romanesco.assets_version_js.yaml
   echo "Setting client_email..."
   sed -i -e "/value/d" -e "/key: client_email/a value: $userEmail" $configsPath/client-email.yaml
-  echo "Setting custom_cache..."
-  sed -i -e "/value/d" -e "/key: custom_cache/a value: '0'" $configsPath/custom-cache.yaml
-  echo "Setting minify_css_js..."
-  sed -i -e "/value/d" -e "/key: minify_css_js/a value: '0'" $configsPath/minify_css_js.yaml
-  echo "Setting cache_buster..."
-  sed -i -e "/value/d" -e "/key: cache_buster/a value: '0'" $configsPath/cache_buster.yaml
 
   # theming
   if [ "$themeColorPrimary" ] ; then
