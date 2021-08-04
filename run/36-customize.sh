@@ -67,7 +67,7 @@ then
   sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $installPath/_operations"
 
   # append local project variables to config
-  cat >> ${seedPath}/config.sh <<EOF
+  cat >> "$installPath/_operations/config.sh" <<EOF
 
 
 # PROJECT
