@@ -1,0 +1,266 @@
+id: 1
+pagetitle: 'Your website is ready'
+alias: index
+published: 1
+introtext: ''
+template: 3
+createdby: 1
+createdon: ''
+publishedon: ''
+publishedby: 1
+menutitle: Welcome
+hidemenu: 1
+uri: ''
+properties: ''
+tvs:
+    header_background: '@INHERIT'
+    header_background_img: ''
+    header_cta: '@INHERIT'
+    header_inheritance: inherit_titles||inherit_background
+    header_subtitle: '@INHERIT'
+    header_title: '@INHERIT'
+    header_visibility: '0'
+    status_assigned_user: ''
+    status_help: ''
+    status_improvements: ''
+    status_indicator: not-done
+    status_notes: ''
+    toolbar_visibility: '0'
+
+-----
+
+<div id="[[stripAsAlias? &input=`Website is ready`]]" class="ui vertical stripe segment inverted">
+    <div class="ui  center aligned container">
+        [[$headingBasicSubtitle?
+        &value=`Your website is ready!<br>`
+        &level=`h1`
+        &subtitle=`Well, sort of...`
+        &alignment=`center aligned`
+        &unique_idx=`1`
+        ]]
+
+        [[$buttonOuter?
+        &link=`[[~[[*id]]]]#get-started`
+        &button_text=``
+        &button_type=`regular`
+        &button_options=``
+        &button_size=`huge`
+        &new_window=`0`
+        &icon_class=`angle double down icon`
+        &icon_options=``
+        &unique_idx=`2`
+        ]]
+    </div>
+</div>
+
+<div id="[[stripAsAlias? &input=`Get started`]]" class="ui vertical stripe segment white">
+    <div class="ui  center aligned container">
+        [[$headingBasic?
+        &value=`What shall we do now?<br>`
+        &level=`h2`
+        &alignment=``
+        &unique_idx=`4`
+        ]]
+
+        [[$dividerBasic?
+        &divider_text=``
+        &divider_section=`1`
+        &divider_hidden=`0`
+        ]]
+
+        [[$cardsOuter?
+        &rows=`[[$cardsRowInnerWrapper?
+        &box_type=`link`
+        &link=`[[~[[++romanesco.pattern_container_id]]]]`
+        &image=``
+        &heading=`View pattern library`
+        &level=`h4`
+        &subtitle=`Get a glimpse of what's included`
+        &content=``
+        &button_text=`Explore`
+        &emphasize=`0`
+        ]]
+
+        [[$cardsRowInnerWrapper?
+        &box_type=`link`
+        &link=`[[~[[++romanesco.backyard_container_id]]]]`
+        &image=``
+        &heading=`View living examples`
+        &level=`h4`
+        &subtitle=`Mostly empty at this point, sorry`
+        &content=``
+        &button_text=`Imagine`
+        &emphasize=`0`
+        ]]
+
+        [[$cardsRowInnerWrapper?
+        &box_type=`link`
+        &link=`https://notes.romanesco.info/theming-structure`
+        &image=``
+        &heading=`Change the styling`
+        &level=`h4`
+        &subtitle=`How to modify the frontend theme`
+        &content=``
+        &button_text=`Buckle up`
+        &emphasize=`0`
+        ]]`
+        &cols=`three`
+        &heading_level=`h4`
+        &box_type=`link`
+        &responsive=`stackable,doubling`
+        ]]
+
+        [[$dividerBasic?
+        &divider_text=``
+        &divider_section=`0`
+        &divider_hidden=`1`
+        ]]
+
+        [[$buttonOuter?
+        &link=`[[~[[++romanesco.backyard_container_id]]]]tutorials`
+        &button_text=`More tutorials`
+        &button_type=`primary`
+        &button_options=``
+        &button_size=`huge`
+        &new_window=`0`
+        &icon_class=``
+        &icon_options=``
+        &unique_idx=`8`
+        ]]
+    </div>
+</div>
+
+<div  class="ui vertical stripe segment primary-color">
+    <div class="ui  center aligned container">
+        [[$headerIconFont?
+        &level=`h3`
+        &value=`Need help?<br>`
+        &icon_class=`life ring icon`
+        &icon_position=`icon`
+        &icon_circular=`0`
+        &subtitle=``
+        &alignment=``
+        ]]
+
+        <div class="ui nested stackable doubling very relaxed left aligned divided equal width grid">
+            <div class=" row">
+                <div class="column">[[$richTextSegment?
+                    &content=`<p>Wow, you made it this far! I admire your bravery.</p>
+                    <p>You need to be even braver from now on, because you're more or less on your own from here. There are a few random notes available on <a href="https://romanesco.info" target="_blank">romanesco.info</a>, but these are more technical notes to self at this point, so probably not really useful. The best way to get started, is simply to log in and try some things out for yourself.
+                    </p>`
+                    &segment_type=``
+                    &padding=`regular`
+                    &alignment=``
+                    ]]</div>
+                <div class="column">[[$richTextSegment?
+                    &content=`<p>If at any point you feel stuck, you can reach me via email and Telegram:</p>
+                    <p><i class="telegram icon"></i>+63 998 372 8497<br>
+                        <i class="mail icon"></i><a href="mailto:support@websitelikethis.com">support@websitelikethis.com</a><br>
+                        <br>I'm generally not very chatty though and I'm based in the Philippines (GMT +8), so expect some delay.
+                    </p>`
+                    &segment_type=``
+                    &padding=`regular`
+                    &alignment=``
+                    ]]</div>
+            </div>
+        </div>
+
+        [[!cbRenderCodeField?
+        &valueRendered=`<style>
+        #website-is-ready {
+            display: flex;
+            min-height: 100vh;
+        }
+        #website-is-ready > .container {
+            flex: 1;
+            align-self: end;
+        }
+    </style>
+
+        <script>
+
+            function loadCSS(filename){
+
+                var file = document.createElement("link");
+                file.setAttribute("rel", "stylesheet");
+                file.setAttribute("type", "text/css");
+                file.setAttribute("href", filename);
+                document.head.appendChild(file);
+
+            }
+
+            // load your CSS
+            loadCSS("https://websitelikethis.com/assets/css/backgrounds.css");
+
+            // load background in first segment
+            var background = document.getElementById("website-is-ready");
+            background.className += " pugsley-is-coming-soon inverted background";
+
+            // load login button for manager
+            var menu = document.querySelector("#menu .container");
+            var highlight = document.createElement("div");
+            var button = document.createElement("a");
+            var icon = document.createElement("i");
+
+            highlight.className = "item highlight";
+            button.className = "ui right labeled icon button";
+            button.href = "manager";
+            icon.className = "sign in alternate icon";
+
+            menu.appendChild(highlight);
+            highlight.appendChild(button);
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode('Log in'));
+
+        </script>`
+        &valueRaw=`<style>
+        #website-is-ready {
+            display: flex;
+            min-height: 100vh;
+        }
+        #website-is-ready > .container {
+            flex: 1;
+            align-self: end;
+        }
+    </style>
+
+        <script>
+
+            function loadCSS(filename){
+
+                var file = document.createElement("link");
+                file.setAttribute("rel", "stylesheet");
+                file.setAttribute("type", "text/css");
+                file.setAttribute("href", filename);
+                document.head.appendChild(file);
+
+            }
+
+            // load your CSS
+            loadCSS("https://websitelikethis.com/assets/css/backgrounds.css");
+
+            // load background in first segment
+            var background = document.getElementById("website-is-ready");
+            background.className += " pugsley-is-coming-soon inverted background";
+
+            // load login button for manager
+            var menu = document.querySelector("#menu .container");
+            var highlight = document.createElement("div");
+            var button = document.createElement("a");
+            var icon = document.createElement("i");
+
+            highlight.className = "item highlight";
+            button.className = "ui right labeled icon button";
+            button.href = "manager";
+            icon.className = "sign in alternate icon";
+
+            menu.appendChild(highlight);
+            highlight.appendChild(button);
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode('Log in'));
+
+        </script>`
+        &renderTag=`ignore`
+        ]]
+    </div>
+</div>
