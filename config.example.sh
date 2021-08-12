@@ -20,7 +20,7 @@ mailBlocksPath=https://github.com/hugopeek/mailblocks.git
 # Each installation has a different user. And each user can only access its own
 # installation. Therefore, if one installation is compromised, it's still very
 # difficult for an attacker to target any of the other installations.
-
+#
 # Sometimes though, you may want to override this behaviour. On your local
 # computer for example, it makes little sense to compartmentalize projects.
 # To run all installations under the same user, enter the username below.
