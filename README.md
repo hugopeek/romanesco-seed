@@ -181,7 +181,7 @@ This installs NodeJS in the home folder of the user running the script.
 
 **Important note:** Romanesco has the ability to regenerate the frontend from inside MODX. If PHP is running under a different user, make sure it can access the Node command.
 
-## Plant the seed!
+# Plant the seed!
 
 Enough with the prep work already. Time to plant the seed!
 
@@ -197,7 +197,7 @@ You can also specify a location with the --path flag:
 ./romanesco plant seed for project 'Project Name' -p '/alternative/path'
 ```
 
-### Isolated installation
+## Isolated installation
 
 If you want to isolate the project on your server, you can install it under its own Linux user. This means that a new Linux user will be created during setup, with a separate home folder. Each installation has a different user. And each user can only access its own installation. Therefore, if one installation is compromised, it's still very difficult for an attacker to target any of the other installations.
 
