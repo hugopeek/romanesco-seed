@@ -24,6 +24,8 @@ Romanesco Seed is command line tool for installing and configuring a Romanesco p
 > ./romanesco plant seed for project 'PROJECT NAME' in database -n DB_NAME -u DB_USER -p DB_PASS
 > ```
 > 
+> A screencast of this process is available on [romanesco.info][14].
+> 
 > But please, continue reading so you know what's going on. Romanesco is more rewarding if you're patient!
 
 ## Introduction
@@ -109,6 +111,8 @@ cp config.example config.sh
 
 Open config.sh with your editor of choice and configure all necessary options. The descriptions above the variables should provide you with enough information. Don't forget to add the ModMore API key from the previous step here.
 
+A screencast of this process is available [here][14].
+
 ## Database
 
 Your project needs a MySQL database. This can be an existing one (as long as it's empty) or a new one created by the installer.
@@ -181,7 +185,7 @@ This installs NodeJS in the home folder of the user running the script.
 
 Enough with the prep work already. Time to plant the seed!
 
-If you set the `localUser` variable in config.sh, then the project will be installed in a folder under the path you defined in `wwwPath`. The following command will do that:
+If you have set the `localUser` variable in config.sh, then the project will be installed in a folder under the path you defined in `wwwPath`. The following command will do that:
 
 ```shell
 ./romanesco plant seed for project 'Project Name' -u 'You'
@@ -214,6 +218,8 @@ Note the domain flag at the end. Certbot obviously needs that to generate the SS
 
 And again, please make sure you test these commands thoroughly before letting them loose on a live server.
 
+Good luck!
+
 ---
 
 For a full list of available flags and commands, run:
@@ -224,7 +230,7 @@ For a full list of available flags and commands, run:
 
 ---
 
-For more information, visit: https://romanesco.info/
+For more information, visit: [https://romanesco.info/][13]
 
 [1]: https://modx.com/get-modx/
 [2]: https://modmore.com/contentblocks/
@@ -238,3 +244,5 @@ For more information, visit: https://romanesco.info/
 [10]: https://docs.modx.org/current/en/getting-started/server-requirements
 [11]: https://modmore.com/account/api-keys/
 [12]: https://notes.romanesco.info/frontend-installation#build-semantic-ui
+[13]: https://romanesco.info/
+[14]: https://romanesco.info/get-started
