@@ -89,4 +89,7 @@ EOF
   sudo -i -u $localUser sh -c "chmod +x $installPath/operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/run $installPath/_operations"
   sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/tools $installPath/_operations"
+
+  # install dependencies
+  sudo -i -u $localUser sh -c "cd $installPath/_operations && composer install"
 fi
