@@ -63,7 +63,7 @@ fi
 if [ "$buildRomanesco" = y ]
 then
   echo "Teach project how to update itself..."
-  sudo -i -u $localUser sh -c "mkdir $installPath/_operations"
+  sudo -i -u $localUser sh -c "mkdir -p $installPath/_operations"
   sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $installPath/_operations"
 
   # append local project variables to config
