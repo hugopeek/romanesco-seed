@@ -47,10 +47,10 @@ phpVersion=7.4
 # be placed there by the installer, in a sub folder with the project name.
 #wwwPath=/var/www/
 
-# Path to your global Gitify folder. If you don't have Gitify installed globally
-# (and don't want to either), you can disable this setting. Gitify will then be
-# installed in the projects _operations/vendor folder instead.
-gitifyPath=/opt/gitify
+# Path to your Gitify executable. If you don't have Gitify installed globally
+# (and don't want to either), you can disable this setting. Then Gitify will be
+# installed in the projects _operations/vendor folder inside your project.
+gitifyCmd=/opt/gitify/gitify
 
 # Default domain extension, if no custom domain is defined.
 # For example: 'loc' will result in the local URL 'project-name.loc'.

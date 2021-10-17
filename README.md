@@ -101,7 +101,7 @@ Log in at [modmore.com][11] and create the API key (create an account first, if 
 
 ## Environment variables
 
-If your environment is suitable for growing a Romanesco, then it's time to configure Romanesco Seed. There are a few paths and variables unique to your setup that it should know about.
+If your environment is suitable for growing a Romanesco, then it's time to configure Romanesco Seed. There are a few paths and variables unique to your setup that it needs to know about.
 
 To do this, copy the included sample config:
 
@@ -153,15 +153,25 @@ mysql -e 'SHOW DATABASES;'
 
 Essential for growing any seed, is of course: water. The digital equivalent of water in the Romanesco ecosystem is called [Gitify][9]. Gitify (together with Git) functions as the irrigation system, moving content and elements around and making sure everything is up-to-date.
 
-Gitify works by extracting data from the database into physical files on your hard drive. Those files can then be managed and monitored by Git, the most widely used version control system in existence. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
+Gitify works by extracting data from the database into physical files on your hard drive / server. Those files can then be managed and monitored by Git, the most widely used version control system out there. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
 
-So what Gitify basically does, is to leverage the power of Git to transport data back and forth between MODX installations. This can be between a development and a live server for example, but Romanesco also uses Gitify to create new projects and apply changes to existing ones.
+What Gitify basically does, is leverage the power of Git to transport data back and forth between MODX installations. This can be between a development and a live server for example, but Romanesco also uses Gitify to create new projects and apply changes to existing ones.
 
-Long story short: it's an indispensable tool, so we need to install it first. Double check that you've defined a suitable Gitify path in config.sh and then run the following command:
+Long story short: it's an indispensable tool, so it needs to be installed. There are 2 ways to do this:
 
-```shell
-./romanesco prepare gitify
+### Global installation
+
+Use the standard command to install Gitify globally with composer:
+
 ```
+composer global require modmore/gitify:^2
+```
+
+After that, you need to manually point the `gitifyCmd` variable (in config.sh) to the Gitify executable. To locate the executable, run `command -v gitify`.
+
+### Local installation
+
+You can also install Gitify separately with each new project. This is done automatically if no global Gitify was found. Just make sure the `gitifyCmd` variable is empty or disabled in config.sh.
 
 ## NodeJS
 
