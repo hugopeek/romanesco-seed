@@ -63,11 +63,11 @@ fi
 if [ "$buildRomanesco" = y ]
 then
   echo "Teach project how to update itself..."
-  sudo -i -u $localUser sh -c "mkdir -p $installPath/_operations"
-  sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $installPath/_operations"
+  sudo -i -u $localUser sh -c "mkdir -p $operationsPath"
+  sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $operationsPath"
 
   # append local project variables to config
-  cat >> "$installPath/_operations/config.sh" <<EOF
+  cat >> "$operationsPath/config.sh" <<EOF
 
 
 # PROJECT
@@ -82,14 +82,17 @@ projectURL=$projectURL
 EOF
 
   # copy operations base config
-  sudo -i -u $localUser sh -c "cp $installPathData/_operations/operations.sh $installPath/_operations/operations.sh"
+  sudo -i -u $localUser sh <<EOF
+cp $installPathData/_operations/operations.sh $operationsPath/operations.sh
 
-  # symlink operations scripts
-  sudo -i -u $localUser sh -c "ln -s $installPath/_operations/operations.sh $installPath/operations"
-  sudo -i -u $localUser sh -c "chmod +x $installPath/operations"
-  sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/run $installPath/_operations"
-  sudo -i -u $localUser sh -c "ln -s $installPathData/_operations/tools $installPath/_operations"
+# symlink operations scripts (using relative paths!)
+cd $installPath
+ln -s ./_operations/operations.sh operations
+chmod +x operations
+ln -s ./_romanesco/_operations/run ./_operations
+ln -s ./_romanesco/_operations/tools ./_operations
 
-  # install dependencies
-  sudo -i -u $localUser sh -c "cd $installPath/_operations && composer install"
+# install dependencies
+cd $operationsPath && composer install
+EOF
 fi
