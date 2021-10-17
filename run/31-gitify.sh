@@ -3,7 +3,7 @@
 # ROMANESCO - GITIFY
 # ==============================================================================
 #
-# Install customized fork of Gitify, with ability to install local packages.
+# Install Gitify, a command line toolkit for managing MODX sites.
 
 
 # CONFIG
@@ -47,16 +47,15 @@ EOF
   sudo -i -u $localUser sh -c "mv $seedPath/composer.phar ~/.local/bin/composer"
 fi
 
-# install Gitify
+# install Gitify for project, if there's no global Gitify available
 if [ -z $(sudo -i -u ${localUser} sh -l -c "command -v $gitifyCmd") ]
 then
   echo "Installing Gitify..."
   sudo -i -u $localUser sh <<EOF
 export PATH=$HOME/.local/bin:$PATH
-git clone https://github.com/hugopeek/Gitify.git $gitifyPath
-cd $gitifyPath
-composer install --no-dev
-chmod +x Gitify
+cd $operationsPath
+composer config minimum-stability alpha
+composer require modmore/gitify:^2
 EOF
   printf "${GREEN}Gitify successfully installed.${NC}\n"
   sudo -i -u $localUser sh -l -c "$gitifyCmd --version"

@@ -47,8 +47,9 @@ phpVersion=7.4
 # be placed there by the installer, in a sub folder with the project name.
 #wwwPath=/var/www/
 
-# Path to the local Gitify folder containing my forked version (!). See readme
-# for more details.
+# Path to your global Gitify folder. If you don't have Gitify installed globally
+# (and don't want to either), you can disable this setting. Gitify will then be
+# installed in the projects _operations/vendor folder instead.
 gitifyPath=/opt/gitify
 
 # Default domain extension, if no custom domain is defined.

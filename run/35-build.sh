@@ -81,7 +81,7 @@ then
   echo "Database $dbName and user successfully created."
 
   # run gitify install
-  sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd modx:install $modxVersion --config=$configXML"
+  sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd modx:install --config=$configXML $modxVersion"
 
   echo "Login credentials for MODX:"
   printf "Username: ${BOLD}$userName${NORMAL}\n"

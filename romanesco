@@ -303,9 +303,6 @@ installMODX="y"
 installPackages="y"
 buildRomanesco="y"
 
-# Gitify command
-gitifyCmd="$gitifyPath/Gitify"
-
 # project name
 lcaseName="${projectName,,}" #convert to lowercase
 lcaseName="${lcaseName// /-}" #remove whitespace
@@ -356,6 +353,16 @@ settingsPath="$installPath/_defaults/system_settings"
 # asset folders
 siteFolder="$installPath/assets/semantic/src/site"
 themeFolder="$installPath/assets/semantic/themes/romanesco"
+
+# operations folder
+operationsPath="$installPath/_operations"
+
+# Gitify command
+if ! [ "$gitifyPath" ]
+then
+  gitifyPath="$operationsPath/vendor"
+fi
+gitifyCmd="${gitifyPath%/}/bin/gitify"
 
 # GPM packages
 gpmPath="${gpmPath%/}"
@@ -433,11 +440,8 @@ then
   if [ "$prepareNginx" ] || [ "$preparePHP"] || [ "$prepareSSL"] ; then
     source "${seedPath}/run/11-server.sh"
   fi
-  if [ "$prepareGitify" ] ; then
-    source "${seedPath}/run/20-gitify.sh"
-  fi
   if [ "$prepareNode" ] ; then
-    source "${seedPath}/run/21-node.sh"
+    source "${seedPath}/run/20-node.sh"
   fi
   installType="prepared"
 fi
@@ -446,7 +450,8 @@ if [ "$plantFlag" ] &&  [ "$plantSeed" ]
 then
   echo "Planting Romanesco..."
   source "${seedPath}/run/30-copy.sh"
-  source "${seedPath}/run/31-customize.sh"
+  source "${seedPath}/run/31-gitify.sh"
+  source "${seedPath}/run/32-customize.sh"
   source "${seedPath}/run/35-build.sh"
   source "${seedPath}/run/36-customize.sh"
   source "${seedPath}/run/37-permissions.sh"

@@ -151,9 +151,9 @@ mysql -e 'SHOW DATABASES;'
 
 ## Gitify
 
-Essential for growing any seed, is of course: water. The digital equivalent of water in the Romanesco ecosystem is called [Gitify][9]. Gitify (together with Git) functions as the irrigation system, moving content and elements around and making sure everything is up to date.
+Essential for growing any seed, is of course: water. The digital equivalent of water in the Romanesco ecosystem is called [Gitify][9]. Gitify (together with Git) functions as the irrigation system, moving content and elements around and making sure everything is up-to-date.
 
-Gitify works by extracting data from the database into physical files on your hard drive. This can then be managed and monitored by Git, the most widely used version control system in existence. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
+Gitify works by extracting data from the database into physical files on your hard drive. Those files can then be managed and monitored by Git, the most widely used version control system in existence. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
 
 So what Gitify basically does, is to leverage the power of Git to transport data back and forth between MODX installations. This can be between a development and a live server for example, but Romanesco also uses Gitify to create new projects and apply changes to existing ones.
 
@@ -162,10 +162,6 @@ Long story short: it's an indispensable tool, so we need to install it first. Do
 ```shell
 ./romanesco prepare gitify
 ```
-
->**NB:** At this point, a customized fork of Gitify is used, containing a few abilities that haven't been merged with the main repository. So if you're using Gitify already, you can't use it for installing Romanesco.
-> 
-> To avoid conflicts, please install the forked version separately. To do this, define a gitifyPath in config.sh to a new (non-existing) location and then run the `prepare gitify` command. The installer references the customized version directly (with full path), so your original (global) Gitify command will continue to work as before (using the main repository).
 
 ## NodeJS
 
