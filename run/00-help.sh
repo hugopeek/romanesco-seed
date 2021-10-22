@@ -13,7 +13,7 @@ echo "Usage: ./romanesco [TASK] [SUBJECT] [--OPTION] for project [PROJECT_NAME] 
 echo "Example: ./romanesco plant seed for project 'Romanesco' -d romanesco.info"
 echo ""
 echo "You can define multiple subjects per task: 'prepare nginx php-fpm ssl'"
-echo "You can also chain tasks together with 'and': 'prepare everything and plant seed'"
+echo "You can also chain tasks together with AND: 'prepare everything AND plant seed'"
 echo ""
 echo "By default, a new database is created by the installer (requires ~/.my.cnf"
 echo "file with root credentials). If this option is unavailable to you, you"

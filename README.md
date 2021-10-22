@@ -212,13 +212,13 @@ If you want to isolate the project on your server, you can install it under its 
 And if you're installing Romanesco on a live server, then you probably want to isolate the PHP-FPM process too. You need use sudo, or run the following command as root:
 
 ```shell
-./romanesco prepare user php-fpm and plant seed for project 'Romanesco'
+./romanesco prepare user php-fpm AND plant seed for project 'Romanesco'
 ```
 
 There are also options to generate a server config under `sites-available` (if you're using Nginx) and to secure the installation right away with a Let's Encrypt SSL certificate. If you want that too, then simply tell the installer to prepare everything:
 
 ```shell
-./romanesco prepare everything and plant seed for project 'Romanesco' -d 'romanesco.info'
+./romanesco prepare everything AND plant seed for project 'Romanesco' -d 'romanesco.info'
 ```
 Note the domain flag at the end. Certbot obviously needs that to generate the SSL certificate. Make sure it is pointing to your server already!
 
