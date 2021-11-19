@@ -2,7 +2,7 @@
 tags:
     - Romanesco/setup
     - about/dev/automation
-    - state/seed
+    - state/plant
 ---
 
 # Romanesco Seed
@@ -11,7 +11,7 @@ Romanesco is a collection of patterns and tools for creating websites in MODX.
 
 Romanesco Seed is command line tool for installing and configuring a Romanesco project.
 
-> **TL;DR**
+> ## TL;DR
 > 
 > Just want the magic commands?
 > 
@@ -20,13 +20,12 @@ Romanesco Seed is command line tool for installing and configuring a Romanesco p
 > cd romanesco-seed
 > cp config.example config.sh
 > nano config.sh # adjust variables here to match your environment
-> ./romanesco prepare gitify
 > ./romanesco plant seed for project 'PROJECT NAME' in database -n DB_NAME -u DB_USER -p DB_PASS
 > ```
 > 
 > A screencast of this process is available on [romanesco.info][14].
 > 
-> But please, continue reading so you know what's going on. Romanesco is more rewarding if you're patient!
+> But please, continue reading to see what's going on behind the curtain. Romanesco is more rewarding if you're patient!
 
 ## Introduction
 
@@ -66,11 +65,11 @@ If you don't want to fool around with the nuclear launch codes, or if you don't 
 
 Before we can start, there are a few things your environment requires:
 
-- Any Linux distribution with the following tools:
+- Any Linux distribution with:
     - rsync
     - sed
     - bash
-    - service
+    - systemd
 - Nginx (if you want to run the preparation tasks) or Apache
 - PHP 7.3 or higher
 - MariaDB or MySQL
@@ -111,13 +110,13 @@ cp config.example config.sh
 
 Open config.sh with your editor of choice and configure all necessary options. The descriptions above the variables should provide you with enough information. Don't forget to add the ModMore API key from the previous step here.
 
-A screencast of this process is available [here][14].
+If you're having trouble with this step, maybe [this screencast][14] can give you some pointers.
 
 ## Database
 
 Your project needs a MySQL database. This can be an existing one (as long as it's empty) or a new one created by the installer.
 
-Credentials for an existing database can be added by appending them to the install command:
+Credentials for an existing database can be added by appending them to the 'plant seed' command with 'in database':
 
 ```shell
 ./romanesco plant seed for project 'X' in database -n Xdb -u Xdbu -p XXXXXXXX
@@ -125,7 +124,7 @@ Credentials for an existing database can be added by appending them to the insta
 
 If no credentials are given, the installer automatically creates a new database. This requires MySQL root credentials. To avoid having to type those every time you run the installer, it is common practice to place them in a file in the users' home folder (`~/.my.cnf`). This file will be picked up by MySQL, allowing us to execute commands without providing username and password.
 
-Needless to say that this can be a bit dangerous if other people ever gain access to this file, so only do this if you're confident that this can't happen on your server.
+You obviously have a problem if anyone or anything nefarious ever gains access to this file, so only do this if you're confident that this cannot happen on your server.
 
 Here's how to do it. As the local user, run:
 
@@ -153,21 +152,21 @@ mysql -e 'SHOW DATABASES;'
 
 Essential for growing any seed, is of course: water. The digital equivalent of water in the Romanesco ecosystem is called [Gitify][9]. Gitify (together with Git) functions as the irrigation system, moving content and elements around and making sure everything is up-to-date.
 
-Gitify works by extracting data from the database into physical files on your hard drive / server. Those files can then be managed and monitored by Git, the most widely used version control system out there. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
+Git is the most widely used version control system available today. Git allows you to keep track of all your changes, merge differences between environments, revert your data to previous states and many more useful things. It's the Finnish army knife of the digital realm.
 
-What Gitify basically does, is leverage the power of Git to transport data back and forth between MODX installations. This can be between a development and a live server for example, but Romanesco also uses Gitify to create new projects and apply changes to existing ones.
+What Gitify basically does, is leverage the power of Git to transport data back and forth between MODX installations. Gitify extracts data from the database into physical files on your hard drive / server. After that, they can be tracked and moved around with Git. With just a few commands, data can travel between a development and a live server for example, but Romanesco also uses Gitify to create new projects and apply changes to existing ones.
 
 Long story short: it's an indispensable tool, so it needs to be installed. There are 2 ways to do this:
 
 ### Global installation
 
-Use the standard command to install Gitify globally with composer:
+Use the standard command to install Gitify globally with Composer:
 
-```
+```shell
 composer global require modmore/gitify:^2
 ```
 
-After that, you need to manually point the `gitifyCmd` variable (in config.sh) to the Gitify executable. To locate the executable, run `command -v gitify`.
+After that, you need to manually point the `gitifyCmd` variable (in config.sh) to the Gitify executable. To locate the executable, run `command -v gitify`. Or better yet, use that command as the variable: `"$(command -v gitify)"`.
 
 ### Local installation
 
