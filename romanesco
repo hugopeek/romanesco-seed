@@ -61,7 +61,7 @@ seedPath="${DIR%/}"
 RED="\033[0;31m"
 GREEN="\033[1;32m"
 YELLOW="\033[0;33m"
-NC='\033[0m' #no color
+NC="\033[0m" #no color
 BOLD="\033[1m"
 NORMAL="\033[0m"
 
@@ -465,7 +465,7 @@ then
   fi
 
   echo -e "${YELLOW}You are about to obliterate $purgeScope ${BOLD}$projectName${NORMAL}${YELLOW} project.${NC}"
-  read -p "${BOLD}Are you sure? [y/N] ${NORMAL}" purgeProject
+  read -p "$(tput bold)Are you sure? [y/N]$(tput sgr0)" purgeProject
 
   # add manual confirmation as failsafe
   if [ "${purgeProject:-N}" != Y ] ; then
