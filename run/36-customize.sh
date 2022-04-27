@@ -89,8 +89,8 @@ cp $installPathData/_operations/operations.sh $operationsPath/operations.sh
 cd $installPath
 ln -s ./_operations/operations.sh operations
 chmod +x operations
-ln -s ./_romanesco/_operations/run ./_operations
-ln -s ./_romanesco/_operations/tools ./_operations
+ln -s ./../_romanesco/_operations/run ./_operations
+ln -s ./../_romanesco/_operations/tools ./_operations
 
 # install dependencies
 cd $operationsPath && composer install
