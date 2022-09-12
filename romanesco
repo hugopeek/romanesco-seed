@@ -367,14 +367,14 @@ fi
 gpmPath="${gpmPath%/}"
 gpmRepos=(
   "$cbHeadingImagePath"
-  "$romanescoBackyardPath"
   "$htmlPageDomPath"
+  "$romanescoBackyardPath"
   "$mailBlocksPath"
 )
 gpmProjects=(
   "cbheadingimage"
-  "romanesco-backyard"
   "htmlpagedom"
+  "romanesco-backyard"
   "mailblocks"
 )
 gpmPackages=()
