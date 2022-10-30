@@ -31,6 +31,12 @@ then
   echo "Setting client_email..."
   sed -i -e "/value/d" -e "/key: client_email/a value: $userEmail" $configsPath/client-email.yaml
 
+  # set environment PATH
+  # WARNING: probably not the full path, including NPM bin!!!
+  # something to do with sudoers protecting the shell...
+  echo "Setting env_path..."
+  echo "value: $(sudo -i -u $localUser sh -c 'echo $PATH')" >> "$settingsPath/romanesco.env-path.yaml"
+
   # theming
   if [ "$themeColorPrimary" ] ; then
     echo "Changing primary color..."
