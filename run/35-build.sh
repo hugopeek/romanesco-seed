@@ -250,16 +250,15 @@ EOF
   # build Backyard resources
   sudo -i -u $localUser sh -c "cd $installPathData/_gitify/build/backyard && $gitifyCmd build"
 
-  # copy local Romanesco packages not present in official repo
+  # install local Romanesco packages not present in official repo
   for package in "${gpmPackages[@]}"
   do
     sudo -i -u $localUser sh -c "cp $package $installPath/core/packages/"
+    sudo -i -u $localUser sh -c "cd $installPath && $gitifyCmd package:install --local"
   done
 
-  # install local packages and wrap up
+  # wrap up
   sudo -i -u $localUser sh <<EOF
-cd $installPath && $gitifyCmd package:install --local
-
 cd $installPath && $gitifyCmd extract
 cd $installPath && git add -A
 cd $installPath && git commit -m "Extract fresh Romanesco installation"
