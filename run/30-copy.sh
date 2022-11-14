@@ -76,6 +76,9 @@ if [ "$copyFiles" = y ]
 then
   echo "Cloning Romanesco repositories..."
 
+  # prevent dubious ownership warning
+  sudo -i -u $localUser sh -c "git config --global --add safe.directory $installPath"
+
   # clone Romanesco repositories
   sudo -i -u $localUser git clone "$gitPathSoil" "$installPath"
   sudo -i -u $localUser git clone "$gitPathData" "$installPathData"
