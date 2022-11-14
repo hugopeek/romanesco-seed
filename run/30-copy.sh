@@ -36,8 +36,7 @@ then
   echo -e "${RED}Abort.${NC}"
   exit 0
 else
-  mkdir $installPath
-  chown $localUser:$localUser $installPath
+  sudo -i -u $localUser sh -c "mkdir $installPath"
 fi
 
 echo "Installation folder successfully created."
