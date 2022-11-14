@@ -77,7 +77,10 @@ then
   echo "Cloning Romanesco repositories..."
 
   # prevent dubious ownership warning
-  sudo -i -u $localUser sh -c "git config --global --add safe.directory $installPath"
+  if [ "$localUser" != "$currentUser" ]
+  then
+    sudo -i -u $currentUser sh -c "git config --global --add safe.directory $installPath"
+  fi
 
   # clone Romanesco repositories
   sudo -i -u $localUser git clone "$gitPathSoil" "$installPath"
