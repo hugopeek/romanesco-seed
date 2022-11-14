@@ -24,7 +24,7 @@ set -e
 echo "Starting build process..."
 
 # create MODX config.xml
-cat > $configXML <<EOF
+sudo -i -u $currentUser sh -c "cat > $configXML" <<EOF
 <modx>
     <database_type>mysql</database_type>
     <database_server>localhost</database_server>
@@ -59,7 +59,7 @@ cat > $configXML <<EOF
 </modx>
 EOF
 
-chown $localUser:$localUser $configXML
+sudo -i -u $currentUser sh -c "chown $localUser:$localUser $configXML"
 
 # install MODX
 if [ "$installMODX" = y ]
