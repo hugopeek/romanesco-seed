@@ -83,12 +83,12 @@ then
   fi
 
   # clone Romanesco repositories
-  sudo -i -u $localUser git clone "$gitPathSoil" "$installPath"
-  sudo -i -u $localUser git clone "$gitPathData" "$installPathData"
-  sudo -i -u $localUser git clone "$gitPathTheme" "$installPathTheme"
+  sudo -i -u $localUser sh -c "git clone $gitPathSoil $installPath"
+  sudo -i -u $localUser sh -c "git clone $gitPathData $installPathData"
+  sudo -i -u $localUser sh -c "git clone $gitPathTheme $installPathTheme"
 
   # unset remote, so it's a separate project from now on
-  cd $installPath && git remote remove origin
+  sudo -i -u $localUser sh -c "cd $installPath && git remote remove origin"
 
   # set git user info for this repository
   sudo -i -u $localUser sh -c "cd $installPath && git config user.email \"$userEmail\""
@@ -97,7 +97,7 @@ then
   echo "Git repositories successfully cloned."
 
   # create modmore.com key file
-  sudo -i -u $localUser cat > $installPath/.modmore.com.key <<EOF
+  sudo -i -u $localUser sh -c "cat > $installPath/.modmore.com.key" <<EOF
 username: $modmoreUser
 api_key: $modmoreAPIkey
 EOF
@@ -108,7 +108,7 @@ EOF
   # create .gitify
   if [ -d "$installPath/_romanesco" ]
   then
-    sudo -i -u $localUser cp $installPath/_romanesco/_gitify/.gitify.project $installPath/.gitify
+    sudo -i -u $localUser sh -c "cp $installPath/_romanesco/_gitify/.gitify.project $installPath/.gitify"
     echo "Gitify config file successfully created."
   else
     echo -e "${YELLOW}Romanesco data folder could not be found.${NC}"

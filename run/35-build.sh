@@ -275,7 +275,7 @@ echo "Clearing cache..."
 rm -rf $installPath/core/cache/*
 
 echo "Creating cache folder for images and ContentBlocks..."
-sudo -i -u $localUser mkdir $installPath/assets/cache
+sudo -i -u $localUser sh -c "mkdir $installPath/assets/cache"
 
 echo "Making config file inaccessible to other users..."
 chmod 0600 $installPath/core/config/config.inc.php

@@ -28,7 +28,7 @@ then
   echo "Creating welcome page..."
 
   rm $installPath/_data/content/web/index.html
-  sudo -i -u $localUser cp $welcomePage $installPath/_data/content/web/index.html
+  sudo -i -u $localUser sh -c "cp $welcomePage $installPath/_data/content/web/index.html"
 
   # create temporary .gitify and build page
   sudo -i -u $localUser sh <<EOF1
