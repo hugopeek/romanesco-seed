@@ -47,7 +47,7 @@ then
 
   # create package folder if needed
   if ! [ -d "$gpmPath" ] ; then
-    sudo -i -u $localUser sh -c "mkdir -p $gpmPath"
+    sudo -i -u $currentUser sh -c "mkdir -p $gpmPath"
   fi
 
   # clone / update source repositories
@@ -56,9 +56,9 @@ then
   do
     project=${gpmProjects[$i]}
     if ! [ -d "$gpmPath/$project" ] ; then
-      sudo -i -u $localUser sh -c "git clone $repository $gpmPath/$project"
+      sudo -i -u $currentUser sh -c "git clone $repository $gpmPath/$project"
     else
-      sudo -i -u $localUser sh -c "cd $gpmPath/$project && git pull"
+      sudo -i -u $currentUser sh -c "cd $gpmPath/$project && git pull"
     fi
     i=$(($i+1))
   done
