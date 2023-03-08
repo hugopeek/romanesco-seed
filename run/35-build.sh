@@ -24,7 +24,7 @@ set -e
 echo "Starting build process..."
 
 # create MODX config.xml
-cat > $configXML <<EOF
+sudo -i -u $localUser sh -c "cat > $configXML" <<EOF
 <modx>
     <database_type>mysql</database_type>
     <database_server>localhost</database_server>
@@ -58,8 +58,6 @@ cat > $configXML <<EOF
     <remove_setup_directory>1</remove_setup_directory>
 </modx>
 EOF
-
-chown $localUser:$localUser $configXML
 
 # install MODX
 if [ "$installMODX" = y ]
@@ -272,13 +270,13 @@ fi
 
 # some final housekeeping
 echo "Clearing cache..."
-rm -rf $installPath/core/cache/*
+sudo -i -u $localUser sh -c "rm -rf $installPath/core/cache/*"
 
 echo "Creating cache folder for images and ContentBlocks..."
-sudo -i -u $localUser mkdir $installPath/assets/cache
+sudo -i -u $localUser sh -c "mkdir $installPath/assets/cache"
 
 echo "Making config file inaccessible to other users..."
-chmod 0600 $installPath/core/config/config.inc.php
+sudo -i -u $localUser sh -c "chmod 0600 $installPath/core/config/config.inc.php"
 
 if [ "$npmFlag" ]
 then

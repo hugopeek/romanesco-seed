@@ -36,8 +36,7 @@ then
   echo -e "${RED}Abort.${NC}"
   exit 0
 else
-  mkdir $installPath
-  chown $localUser:$localUser $installPath
+  sudo -i -u $localUser sh -c "mkdir $installPath"
 fi
 
 echo "Installation folder successfully created."
@@ -48,7 +47,7 @@ then
 
   # create package folder if needed
   if ! [ -d "$gpmPath" ] ; then
-    sudo -i -u $localUser sh -c "mkdir -p $gpmPath"
+    sudo -i -u $currentUser sh -c "mkdir -p $gpmPath"
   fi
 
   # clone / update source repositories
@@ -57,9 +56,9 @@ then
   do
     project=${gpmProjects[$i]}
     if ! [ -d "$gpmPath/$project" ] ; then
-      sudo -i -u $localUser sh -c "git clone $repository $gpmPath/$project"
+      sudo -i -u $currentUser sh -c "git clone $repository $gpmPath/$project"
     else
-      sudo -i -u $localUser sh -c "cd $gpmPath/$project && git pull"
+      sudo -i -u $currentUser sh -c "cd $gpmPath/$project && git pull"
     fi
     i=$(($i+1))
   done
@@ -77,13 +76,19 @@ if [ "$copyFiles" = y ]
 then
   echo "Cloning Romanesco repositories..."
 
+  # prevent dubious ownership warning
+  if [ "$localUser" != "$currentUser" ]
+  then
+    sudo -i -u $currentUser sh -c "git config --global --add safe.directory $installPath"
+  fi
+
   # clone Romanesco repositories
-  sudo -i -u $localUser git clone "$gitPathSoil" "$installPath"
-  sudo -i -u $localUser git clone "$gitPathData" "$installPathData"
-  sudo -i -u $localUser git clone "$gitPathTheme" "$installPathTheme"
+  sudo -i -u $localUser sh -c "git clone $gitPathSoil $installPath"
+  sudo -i -u $localUser sh -c "git clone $gitPathData $installPathData"
+  sudo -i -u $localUser sh -c "git clone $gitPathTheme $installPathTheme"
 
   # unset remote, so it's a separate project from now on
-  cd $installPath && git remote remove origin
+  sudo -i -u $localUser sh -c "cd $installPath && git remote remove origin"
 
   # set git user info for this repository
   sudo -i -u $localUser sh -c "cd $installPath && git config user.email \"$userEmail\""
@@ -92,7 +97,7 @@ then
   echo "Git repositories successfully cloned."
 
   # create modmore.com key file
-  sudo -i -u $localUser cat > $installPath/.modmore.com.key <<EOF
+  sudo -i -u $localUser sh -c "cat > $installPath/.modmore.com.key" <<EOF
 username: $modmoreUser
 api_key: $modmoreAPIkey
 EOF
@@ -103,7 +108,7 @@ EOF
   # create .gitify
   if [ -d "$installPath/_romanesco" ]
   then
-    sudo -i -u $localUser cp $installPath/_romanesco/_gitify/.gitify.project $installPath/.gitify
+    sudo -i -u $localUser sh -c "cp $installPath/_romanesco/_gitify/.gitify.project $installPath/.gitify"
     echo "Gitify config file successfully created."
   else
     echo -e "${YELLOW}Romanesco data folder could not be found.${NC}"

@@ -27,40 +27,40 @@ echo "Customizing project settings..."
 if [ "$buildRomanesco" = y ]
 then
   echo "Setting site_name..."
-  sed -i -e "/value/d" -e "/key: site_name/a value: '$projectName'" $settingsPath/site-name.yaml
+  sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: site_name/a value: '$projectName'\" $settingsPath/site-name.yaml"
   echo "Setting client_email..."
-  sed -i -e "/value/d" -e "/key: client_email/a value: $userEmail" $configsPath/client-email.yaml
+  sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: client_email/a value: $userEmail\" $configsPath/client-email.yaml"
 
   # set environment PATH
   # WARNING: probably not the full path, including NPM bin!!!
   # something to do with sudoers protecting the shell...
   echo "Setting env_path..."
-  echo "value: $(sudo -i -u $localUser sh -c 'echo $PATH')" >> "$settingsPath/romanesco.env-path.yaml"
+  sudo -i -u $localUser sh -c "echo \"value: \$PATH\" >> $settingsPath/romanesco.env-path.yaml"
 
   # theming
   if [ "$themeColorPrimary" ] ; then
     echo "Changing primary color..."
-    sed -i -e "/value/d" -e "/key: theme_color_primary/a value: $themeColorPrimary" $configsPath/theme-color-primary.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_color_primary/a value: $themeColorPrimary\" $configsPath/theme-color-primary.yaml"
   fi
   if [ "$themeColorPrimaryLight" ] ; then
     echo "Changing primary light color..."
-    sed -i -e "/value/d" -e "/key: theme_color_primary_light/a value: $themeColorPrimaryLight" $configsPath/theme-color-primary-light.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_color_primary_light/a value: $themeColorPrimaryLight\" $configsPath/theme-color-primary-light.yaml"
   fi
   if [ "$themeColorSecondary" ] ; then
     echo "Changing secondary color..."
-    sed -i -e "/value/d" -e "/key: theme_color_secondary/a value: $themeColorSecondary" $configsPath/theme-color-secondary.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_color_secondary/a value: $themeColorSecondary\" $configsPath/theme-color-secondary.yaml"
   fi
   if [ "$themeColorSecondaryLight" ] ; then
     echo "Changing secondary color..."
-    sed -i -e "/value/d" -e "/key: theme_color_secondary_light/a value: $themeColorSecondaryLight" $configsPath/theme-color-secondary-light.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_color_secondary_light/a value: $themeColorSecondaryLight\" $configsPath/theme-color-secondary-light.yaml"
   fi
   if [ "$themeFontHeader" ] ; then
     echo "Changing header font..."
-    sed -i -e "/value/d" -e "/key: theme_font_header/a value: $themeFontHeader" $configsPath/theme-font-header.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_font_header/a value: $themeFontHeader\" $configsPath/theme-font-header.yaml"
   fi
   if [ "$themeFontPage" ] ; then
     echo "Changing regular font..."
-    sed -i -e "/value/d" -e "/key: theme_font_page/a value: $themeFontPage" $configsPath/theme-font-page.yaml
+    sudo -i -u $localUser sh -c "sed -i -e \"/value/d\" -e \"/key: theme_font_page/a value: $themeFontPage\" $configsPath/theme-font-page.yaml"
   fi
 fi
 

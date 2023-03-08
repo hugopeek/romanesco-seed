@@ -310,9 +310,12 @@ lcaseName="${lcaseName// /-}" #remove whitespace
 # domain name
 projectURL="${projectURL:-${lcaseName}.${domainExt}}"
 
-# if local user is NOT defined in config.sh, a new user will be created
+# user management
 localUserFlag=
+currentUser="$(/usr/bin/whoami)"
 phpSocket="/run/php/php${phpVersion}-fpm.sock"
+
+# if local user is NOT defined in config.sh, a new user will be created
 if ! [ "$localUser" ]
 then
   localUser="$lcaseName"
@@ -389,7 +392,7 @@ fi
 
 # MODX
 modxVersion="${modxVersion}"
-configXML="$(mktemp)"
+configXML="$(sudo -i -u $localUser sh -c 'mktemp')"
 language="${language:-en}"
 userName="${userName:-${lcaseName//-/}_admin}"
 userPass="${userPass:-$(genpasswd)}"

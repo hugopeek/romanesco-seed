@@ -27,8 +27,8 @@ if [ "$buildRomanesco" = y ] && [ "$welcomePage" ]
 then
   echo "Creating welcome page..."
 
-  rm $installPath/_data/content/web/index.html
-  sudo -i -u $localUser cp $welcomePage $installPath/_data/content/web/index.html
+  sudo -i -u $localUser sh -c "rm $installPath/_data/content/web/index.html"
+  sudo -i -u $localUser sh -c "cp $welcomePage $installPath/_data/content/web/index.html"
 
   # create temporary .gitify and build page
   sudo -i -u $localUser sh <<EOF1
@@ -67,7 +67,7 @@ then
   sudo -i -u $localUser sh -c "cp ${seedPath}/config.sh $operationsPath"
 
   # append local project variables to config
-  cat >> "$operationsPath/config.sh" <<EOF
+  sudo -i -u $localUser sh -c "cat >> $operationsPath/config.sh" <<EOF
 
 
 # PROJECT
